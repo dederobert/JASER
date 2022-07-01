@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
+  <parent>
+    <artifactId>jaser</artifactId>
+    <groupId>fr.lehtto</groupId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>jaser-core</artifactId>
+  <name>JASER core</name>
+  <description>Core module for JASER</description>
+  <packaging>jar</packaging>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>fr.lehtto</groupId>
+        <artifactId>jaser-bom</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- COMPILATION DEPENDENCIES -->
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+
+    <!-- RUNTIME DEPENDENCIES -->
+
+    <!-- TEST DEPENDENCIES -->
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <type>pom</type>
+    </dependency>
+  </dependencies>
+
+</project>
