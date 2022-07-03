@@ -100,7 +100,11 @@ public enum Type {
   /**
    * MAILA (mail agent) record.
    */
-  MAILA(254);
+  MAILA(254),
+  /**
+   * ANY (any) record.
+   */
+  ANY(255);
 
   /**
    * The type value.

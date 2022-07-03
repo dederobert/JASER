@@ -7,12 +7,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
 /**
- * DNS answer entity.
+ * DNS authority entity.
  *
  * @author lehtto
  * @since 0.1.0
  */
-public class Answer extends ResourceRecord {
+public class Authority extends ResourceRecord {
 
   /**
    * Valued constructor.
@@ -23,7 +23,7 @@ public class Answer extends ResourceRecord {
    * @param ttl         the time to live of the resource record.
    * @param data        the data of the resource record.
    */
-  public Answer(final byte @NotNull [] name,
+  public Authority(final byte @NotNull [] name,
       final @NotNull Type type,
       final @NotNull DnsClass recordClass,
       final @Range(from = 0, to = Integer.MAX_VALUE) int ttl,

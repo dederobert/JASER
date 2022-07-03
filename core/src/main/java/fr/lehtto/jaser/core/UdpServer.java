@@ -8,6 +8,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Lehtto
  * @since 0.1.0
  */
+@Experimental
 public class UdpServer<H extends AbstractUdpClientHandler> extends Server<H> {
 
   private static final Logger LOG = LogManager.getLogger(UdpServer.class);

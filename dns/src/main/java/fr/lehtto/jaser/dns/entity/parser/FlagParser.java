@@ -143,8 +143,8 @@ public final class FlagParser {
    * The Z flag is composed of 3 bits.
    * <ol>
    *  <li>The Z flag <b>must</b> be zero for all queries.</li>
-   *  <li>The AA flag <b>must</b> be set to 1 for all answers.</li>
-   *  <li>The NAD flag <b>must</b> be set to 0 for all answers.</li>
+   *  <li>The AA flag <b>must</b> be set to 1 for all answerRecords.</li>
+   *  <li>The NAD flag <b>must</b> be set to 0 for all answerRecords.</li>
    * </ol>
    *
    * @param headerBytes the header bytes

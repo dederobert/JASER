@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -67,6 +68,7 @@ abstract class Server<H extends AbstractClientHandler> implements AutoCloseable,
    *
    * @throws IOException if an error occurs
    */
+  @OverrideOnly
   protected abstract void stop() throws IOException;
 
   /**

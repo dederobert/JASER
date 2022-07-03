@@ -24,7 +24,7 @@ public class StartCommand implements Runnable {
 
   private static final Logger LOG = LogManager.getLogger(StartCommand.class);
 
-  @Parameters(index = "0", arity = "0..1", defaultValue = "localhost", description = "Address of the DNS server")
+  @Parameters(index = "0", arity = "0..1", defaultValue = "localhost", description = "AddressV4 of the DNS server")
   private InetAddress ip;
 
   @Parameters(index = "1", arity = "0..1", defaultValue = "53", description = "Port to listen on")

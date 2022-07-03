@@ -22,14 +22,14 @@ public final class Writer {
   /**
    * Writes a {@link Writable writable} to a buffer.
    *
-   * @param header the header to write to the buffer
+   * @param writable the {@link Writable writable} to write to the buffer
    * @param buffer the buffer to write to
    * @param offset the offset to start writing at
    * @return the number of bytes written
    */
   @Contract(mutates = "param2")
-  public static int write(final @NotNull Writable header, final byte @NotNull [] buffer, final int offset) {
-    final byte[] bytes = header.getBytes();
+  public static int write(final @NotNull Writable writable, final byte @NotNull [] buffer, final int offset) {
+    final byte[] bytes = writable.getBytes();
     System.arraycopy(bytes, 0, buffer, 0, bytes.length);
     return bytes.length;
   }

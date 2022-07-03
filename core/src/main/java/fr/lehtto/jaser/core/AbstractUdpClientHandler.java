@@ -2,6 +2,7 @@ package fr.lehtto.jaser.core;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Lehtto
  * @since 0.1.0
  */
+@Experimental
 public abstract class AbstractUdpClientHandler extends AbstractClientHandler {
 
   private final @NotNull DatagramPacket packet;

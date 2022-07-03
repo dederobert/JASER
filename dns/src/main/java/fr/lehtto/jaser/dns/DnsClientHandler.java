@@ -1,11 +1,13 @@
 package fr.lehtto.jaser.dns;
 
 import fr.lehtto.jaser.core.AbstractUdpClientHandler;
+import fr.lehtto.jaser.dns.entity.AddressV4;
 import fr.lehtto.jaser.dns.entity.Answer;
 import fr.lehtto.jaser.dns.entity.Query;
 import fr.lehtto.jaser.dns.entity.Response;
 import fr.lehtto.jaser.dns.entity.enumration.DnsClass;
 import fr.lehtto.jaser.dns.entity.enumration.Type;
+import fr.lehtto.jaser.dns.entity.rdata.internet.ARdata;
 import fr.lehtto.jaser.dns.entity.writer.ResponseWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -75,16 +77,11 @@ public class DnsClientHandler extends AbstractUdpClientHandler {
         Type.A,
         DnsClass.IN,
         116,
-        // Data
-        new byte[]{
-            (byte) 172,
-            (byte) 217,
-            (byte) 19,
-            (byte) 228}
+        new ARdata(AddressV4.of(172, 217, 19, 228))
     );
 
     // TODO update response QR bit and AN count
-    return new Response(query.header(), query.questions(), Set.of(answer));
+    return new Response(query.header(), query.questions(), Set.of(answer), Set.of(), Set.of());
   }
 
   @Override

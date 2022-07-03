@@ -6,6 +6,7 @@ import java.lang.ref.WeakReference;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Lehtto
  * @since 0.1.0
  */
-public abstract class AbstractClientHandler implements Closeable, Runnable {
+abstract class AbstractClientHandler implements Closeable, Runnable {
 
   private static final Logger LOG = LogManager.getLogger(AbstractClientHandler.class);
 
@@ -47,16 +48,8 @@ public abstract class AbstractClientHandler implements Closeable, Runnable {
    *
    * @throws IOException if an error occurs
    */
+  @OverrideOnly
   protected abstract void stop() throws IOException;
-
-  /**
-   * Gets the client ID.
-   *
-   * @return the client ID
-   */
-  public @NotNull UUID getUuid() {
-    return uuid;
-  }
 
   /**
    * Gets the running state.
@@ -68,11 +61,20 @@ public abstract class AbstractClientHandler implements Closeable, Runnable {
   }
 
   /**
+   * Gets the client ID.
+   *
+   * @return the client ID
+   */
+  @NotNull UUID getUuid() {
+    return uuid;
+  }
+
+  /**
    * Gets the client handler thread.
    *
    * @return the client handler thread
    */
-  public @Nullable Thread getThread() {
+  @Nullable Thread getThread() {
     return thread.get();
   }
 
@@ -81,7 +83,7 @@ public abstract class AbstractClientHandler implements Closeable, Runnable {
    *
    * @param thread the client handler thread
    */
-  public void setThread(final @NotNull Thread thread) {
+  void setThread(final @NotNull Thread thread) {
     this.thread = new WeakReference<>(thread);
   }
 }

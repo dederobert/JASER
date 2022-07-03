@@ -2,6 +2,7 @@ package fr.lehtto.jaser.core;
 
 import java.io.IOException;
 import java.net.Socket;
+import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Lehtto
  * @since 0.1.0
  */
+@Experimental
 public abstract class AbstractTcpClientHandler extends AbstractClientHandler {
 
   private final @NotNull Socket socket;

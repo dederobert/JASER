@@ -84,7 +84,7 @@ public final class HeaderParser {
   /**
    * Gets the ARCOUNT.
    * <p>
-   * The ARCOUNT field contains the number of resource records in the additional records section.
+   * The ARCOUNT field contains the number of resource records in the additionalRecords records section.
    *
    * @param headerBytes the header bytes
    * @return the ARCOUNT
