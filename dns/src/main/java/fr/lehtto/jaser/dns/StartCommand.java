@@ -1,12 +1,10 @@
 package fr.lehtto.jaser.dns;
 
-import fr.lehtto.jaser.core.utils.BeautifulListLogger;
+import fr.lehtto.jaser.core.console.Cui;
+import fr.lehtto.jaser.dns.console.RecordsCommandHandler;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import picocli.CommandLine;
@@ -18,6 +16,7 @@ import picocli.CommandLine.Parameters;
  * Start command.
  *
  * @author Lehtto
+ * @version 0.2.0
  * @since 0.1.0
  */
 @Command(name = "start", mixinStandardHelpOptions = true, description = "Starts the DNS server")
@@ -53,54 +52,26 @@ public class StartCommand implements Runnable {
    */
   @Override
   public void run() {
-    // Create a new DNS server
+    // Create a new DNS server and start it
     try {
       Dns.INSTANCE.load(file);
     } catch (final IOException ex) {
       LOG.error("Error while loading the DNS zone", ex);
       return;
     }
-
     Dns.INSTANCE.start(ip, port);
-    readConsoleInputs();
+
+    // Create a new CUI and start it
+    final Cui cui = new Cui();
+    cui.withCommonCommandHandler();
+    cui.withHelper("  records, r: print records");
+    cui.addCommandHandler(RecordsCommandHandler.class);
+    cui.start();
 
     try {
       Dns.INSTANCE.close();
     } catch (final IOException e) {
       LOG.error("Error while closing the DNS server", e);
     }
-  }
-
-  /**
-   * Reads the console inputs.
-   */
-  private void readConsoleInputs() {
-    LOG.info("Entering console mode");
-    LOG.info("Type 'h' for help");
-    try (final Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8)) {
-      boolean running = true;
-      while (running) {
-        final String line = scanner.nextLine();
-        if ("q".equals(line)) {
-          running = false;
-        } else if ("r".equals(line)) {
-          BeautifulListLogger.log(LOG, Level.INFO, "Resource records", Dns.INSTANCE.getMasterFile());
-        } else if ("h".equals(line)) {
-          printHelp();
-        } else {
-          LOG.info("Unknown command: {}", line);
-        }
-      }
-    }
-  }
-
-  /**
-   * Prints the help.
-   */
-  private void printHelp() {
-    LOG.info("Commands:");
-    LOG.info("  q: quit");
-    LOG.info("  r: print records");
-    LOG.info("  h: help");
   }
 }
