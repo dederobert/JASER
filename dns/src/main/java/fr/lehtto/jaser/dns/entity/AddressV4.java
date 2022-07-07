@@ -30,6 +30,22 @@ public record AddressV4(byte @NotNull [] address) implements Writable {
     return new AddressV4(new byte[]{(byte) a1, (byte) a2, (byte) a3, (byte) a4});
   }
 
+  /**
+   * Creates a new instance of IPV4 address.
+   *
+   * @param address The address to create.
+   * @return The new instance of IPV4 address.
+   */
+  public static AddressV4 of(final @NotNull String address) {
+    final String[] parts = address.split("[.]");
+    final int length = parts.length;
+    final byte[] bytes = new byte[length];
+    for (int i = 0; i < length; i++) {
+      bytes[i] = (byte) Integer.parseInt(parts[i]);
+    }
+    return new AddressV4(bytes);
+  }
+
   @Override
   public byte @NotNull [] getBytes() {
     return Arrays.copyOf(address, 4);
@@ -54,8 +70,10 @@ public record AddressV4(byte @NotNull [] address) implements Writable {
 
   @Override
   public String toString() {
-    return "AddressV4{" +
-        "address=" + Arrays.toString(address) +
-        '}';
+    return "IPV4{" +
+        Byte.toUnsignedInt(address[0]) + '.' +
+        Byte.toUnsignedInt(address[1]) + '.' +
+        Byte.toUnsignedInt(address[2]) + '.' +
+        Byte.toUnsignedInt(address[3]) + '}';
   }
 }

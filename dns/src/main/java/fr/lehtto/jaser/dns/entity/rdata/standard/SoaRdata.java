@@ -1,9 +1,13 @@
 package fr.lehtto.jaser.dns.entity.rdata.standard;
 
+import fr.lehtto.jaser.core.utils.NumberUtils;
+import fr.lehtto.jaser.dns.entity.enumration.Type;
+import fr.lehtto.jaser.dns.entity.rdata.RDataParser;
 import fr.lehtto.jaser.dns.entity.rdata.Rdata;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * SOA RDATA entity (RFC 1035 section 3.3.13).
@@ -11,19 +15,74 @@ import org.jetbrains.annotations.NotNull;
  * @author lehtto
  * @version 0.1.0
  */
-public record SoaRdata(@NotNull String mName, @NotNull String rName, int serial, int refresh, int retry, int expire,
+public record SoaRdata(@NotNull String origin, @NotNull String contact, int serial, int refresh, int retry, int expire,
                        int minimum) implements Rdata {
 
   @Override
   public byte @NotNull [] getBytes() {
-    final ByteBuffer buffer = ByteBuffer.allocate(mName.length() + rName.length() + 20);
-    buffer.put(mName.getBytes(StandardCharsets.UTF_8));
-    buffer.put(rName.getBytes(StandardCharsets.UTF_8));
+    final ByteBuffer buffer = ByteBuffer.allocate(origin.length() + contact.length() + 20);
+    buffer.put(origin.getBytes(StandardCharsets.UTF_8));
+    buffer.put(contact.getBytes(StandardCharsets.UTF_8));
     buffer.putInt(serial);
     buffer.putInt(refresh);
     buffer.putInt(retry);
     buffer.putInt(expire);
     buffer.putInt(minimum);
     return buffer.array();
+  }
+
+  @Override
+  public String toString() {
+    return "SOA RDATA{" +
+        "origin='" + origin + '\'' +
+        ", contact='" + contact + '\'' +
+        ", serial=" + serial +
+        ", refresh=" + refresh +
+        ", retry=" + retry +
+        ", expire=" + expire +
+        ", minimum=" + minimum +
+        '}';
+  }
+
+  /**
+   * Parses the given string into a SOA RDATA.
+   */
+  public static class SoaRdataParser extends RDataParser {
+
+    /**
+     * Valued constructor.
+     *
+     * @param next the next parser to use
+     */
+    public SoaRdataParser(final @Nullable RDataParser next) {
+      super(next);
+    }
+
+    @Override
+    protected @Nullable Rdata handle(final @NotNull Type type, final @NotNull String @NotNull [] parts) {
+      if (Type.SOA != type) {
+        return null;
+      }
+      if (7 != parts.length) {
+        throw new IllegalArgumentException("SAO RDATA must have exactly 7 parts");
+      }
+      if (!NumberUtils.isParsable(parts[2])) {
+        throw new IllegalArgumentException("Serial number must be a parsable integer");
+      }
+      if (!NumberUtils.isParsable(parts[3])) {
+        throw new IllegalArgumentException("Refresh interval must be a parsable integer");
+      }
+      if (!NumberUtils.isParsable(parts[4])) {
+        throw new IllegalArgumentException("Retry interval must be a parsable integer");
+      }
+      if (!NumberUtils.isParsable(parts[5])) {
+        throw new IllegalArgumentException("Expire interval must be a parsable integer");
+      }
+      if (!NumberUtils.isParsable(parts[6])) {
+        throw new IllegalArgumentException("Minimum TTL must be a parsable integer");
+      }
+      return new SoaRdata(parts[0], parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
+          Integer.parseInt(parts[4]), Integer.parseInt(parts[5]), Integer.parseInt(parts[6]));
+    }
   }
 }

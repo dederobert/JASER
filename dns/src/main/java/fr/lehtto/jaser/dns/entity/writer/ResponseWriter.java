@@ -1,9 +1,7 @@
 package fr.lehtto.jaser.dns.entity.writer;
 
-import fr.lehtto.jaser.dns.entity.Additional;
-import fr.lehtto.jaser.dns.entity.Answer;
-import fr.lehtto.jaser.dns.entity.Authority;
 import fr.lehtto.jaser.dns.entity.Question;
+import fr.lehtto.jaser.dns.entity.ResourceRecord;
 import fr.lehtto.jaser.dns.entity.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,17 +45,17 @@ public final class ResponseWriter {
     }
 
     // Write the answerRecords
-    for (final Answer answer : response.answerRecords()) {
+    for (final ResourceRecord answer : response.answerRecords()) {
       i += Writer.write(answer, buffer, i);
     }
 
     // Write the authorityRecords
-    for (final Authority authority: response.authorityRecords()) {
+    for (final ResourceRecord authority: response.authorityRecords()) {
       i += Writer.write(authority, buffer, i);
     }
 
     // Write the additionalRecords
-    for (final Additional additional : response.additionalRecords()) {
+    for (final ResourceRecord additional : response.additionalRecords()) {
       i += Writer.write(additional, buffer, i);
     }
     return i;

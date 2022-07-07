@@ -5,7 +5,7 @@ import static fr.lehtto.jaser.dns.entity.Header.HEADER_SIZE;
 import fr.lehtto.jaser.dns.entity.parser.HeaderParser;
 import fr.lehtto.jaser.dns.entity.parser.QuestionParser;
 import java.util.Arrays;
-import java.util.Set;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Lehtto
  * @since 0.1.0
  */
-public record Query(@NotNull Header header, @NotNull Set<Question> questions) {
+public record Query(@NotNull Header header, @NotNull List<Question> questions) {
 
   private static final Logger LOG = LogManager.getLogger(Query.class);
 
@@ -33,15 +33,9 @@ public record Query(@NotNull Header header, @NotNull Set<Question> questions) {
 
     // Read the header
     final Header header = HeaderParser.parse(Arrays.copyOfRange(bytes, 0, HEADER_SIZE));
-    final Set<Question> questions = QuestionParser.parse(bytes, HEADER_SIZE, length);
-    return new Query(header, questions);
-  }
+    // Read the questions
+    final List<Question> questions = QuestionParser.parse(bytes, HEADER_SIZE, length);
 
-  @Override
-  public String toString() {
-    return "Query{" +
-        "header=" + header +
-        ", questions=" + questions +
-        '}';
+    return new Query(header, questions);
   }
 }

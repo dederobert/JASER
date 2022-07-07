@@ -1,10 +1,13 @@
 package fr.lehtto.jaser.dns.entity.rdata.internet;
 
 import fr.lehtto.jaser.dns.entity.AddressV4;
+import fr.lehtto.jaser.dns.entity.enumration.Type;
+import fr.lehtto.jaser.dns.entity.rdata.RDataParser;
 import fr.lehtto.jaser.dns.entity.rdata.Rdata;
 import java.util.Arrays;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * WKS RDATA entity (RFC 1035, section 3.4.2).
@@ -51,5 +54,25 @@ public record WksRdata(@NotNull AddressV4 address, byte protocol, byte @NotNull 
         ", protocol=" + protocol +
         ", bitmap=" + Arrays.toString(bitmap) +
         '}';
+  }
+
+  /**
+   * Parses the given string into a WKS RDATA.
+   */
+  public static class WksRdataParser extends RDataParser {
+
+    /**
+     * Valued constructor.
+     *
+     * @param next the next parser to use
+     */
+    public WksRdataParser(final @Nullable RDataParser next) {
+      super(next);
+    }
+
+    @Override
+    protected @Nullable Rdata handle(final @NotNull Type type, final @NotNull String @NotNull [] parts) {
+      return null;
+    }
   }
 }

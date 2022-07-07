@@ -16,7 +16,7 @@ public enum DnsClass {
    */
   IN(1),
   /**
-   * CSNET (2).
+   * CSNET (2) (Obsolete).
    */
   CS(2),
   /**
@@ -24,7 +24,7 @@ public enum DnsClass {
    */
   CH(3),
   /**
-   * Hesiod (4).
+   * Hesiod (4) (Dyer 87).
    */
   HS(4);
 

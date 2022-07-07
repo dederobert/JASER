@@ -1,9 +1,14 @@
 package fr.lehtto.jaser.dns.entity.rdata.standard;
 
+import fr.lehtto.jaser.core.utils.NumberUtils;
+import fr.lehtto.jaser.dns.entity.enumration.Type;
+import fr.lehtto.jaser.dns.entity.parser.InvalidDnsZoneEntryException;
+import fr.lehtto.jaser.dns.entity.rdata.RDataParser;
 import fr.lehtto.jaser.dns.entity.rdata.Rdata;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * MX RDATA entity (RFC 1035, section 3.3.9).
@@ -19,5 +24,44 @@ public record MxRdata(short preference, @NotNull String exchange) implements Rda
     buffer.putShort(preference);
     buffer.put(exchange.getBytes(StandardCharsets.UTF_8));
     return buffer.array();
+  }
+
+  @Override
+  public String toString() {
+    return "MX RDATA{" +
+        "preference=" + preference +
+        ", exchange='" + exchange + '\'' +
+        '}';
+  }
+
+  /**
+   * Parses the given string into a MX RDATA.
+   */
+  public static class MxRdataParser extends RDataParser {
+
+    /**
+     * Valued constructor.
+     *
+     * @param next the next parser to use
+     */
+    public MxRdataParser(final @Nullable RDataParser next) {
+      super(next);
+    }
+
+    @Override
+    protected @Nullable Rdata handle(final @NotNull Type type, final @NotNull String @NotNull [] parts)
+        throws InvalidDnsZoneEntryException {
+      if (Type.MX != type) {
+        return null;
+      }
+      if (2 != parts.length) {
+        throw new InvalidDnsZoneEntryException("MX RDATA must contain 2 parts.");
+      }
+      if (!NumberUtils.isParsable(parts[0])) {
+        throw new InvalidDnsZoneEntryException("MX RDATA must contain a valid number for the preference. Contains %s",
+            parts[0]);
+      }
+      return new MxRdata(Short.parseShort(parts[0]), parts[1]);
+    }
   }
 }

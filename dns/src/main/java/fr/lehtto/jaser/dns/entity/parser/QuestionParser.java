@@ -4,8 +4,8 @@ import fr.lehtto.jaser.dns.entity.Question;
 import fr.lehtto.jaser.dns.entity.enumration.DnsClass;
 import fr.lehtto.jaser.dns.entity.enumration.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -32,11 +32,11 @@ public final class QuestionParser {
    * @param length the length of the bytes to parse
    * @return the parsed question
    */
-  public static @NotNull Set<Question> parse(final byte @NotNull [] bytes, final int offset, final int length) {
+  public static @NotNull List<Question> parse(final byte @NotNull [] bytes, final int offset, final int length) {
     final StringBuilder name = new StringBuilder(length - offset);
     int i = offset;
 
-    final Set<Question> questions = new HashSet<>();
+    final List<Question> questions = new ArrayList<>();
     while (i < length) {
       while (0 != bytes[i]) {
         name.append(new String(bytes, i, 1, StandardCharsets.UTF_8));

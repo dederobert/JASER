@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Lehtto
  * @since 0.1.0
  */
-public final class Writer {
+final class Writer {
 
   /**
    * Default constructor.
@@ -28,9 +28,9 @@ public final class Writer {
    * @return the number of bytes written
    */
   @Contract(mutates = "param2")
-  public static int write(final @NotNull Writable writable, final byte @NotNull [] buffer, final int offset) {
+  static int write(final @NotNull Writable writable, final byte @NotNull [] buffer, final int offset) {
     final byte[] bytes = writable.getBytes();
-    System.arraycopy(bytes, 0, buffer, 0, bytes.length);
+    System.arraycopy(bytes, 0, buffer, offset, bytes.length);
     return bytes.length;
   }
 

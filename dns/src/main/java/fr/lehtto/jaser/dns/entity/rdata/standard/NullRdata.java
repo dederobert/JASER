@@ -1,8 +1,11 @@
 package fr.lehtto.jaser.dns.entity.rdata.standard;
 
+import fr.lehtto.jaser.dns.entity.enumration.Type;
+import fr.lehtto.jaser.dns.entity.rdata.RDataParser;
 import fr.lehtto.jaser.dns.entity.rdata.Rdata;
 import java.util.Arrays;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * NULL RDATA entity (RFC 1035, section 3.3.10) (Experimental).
@@ -39,5 +42,25 @@ public record NullRdata(byte @NotNull [] data) implements Rdata {
     return "NullRdata{" +
         "data=" + Arrays.toString(data) +
         '}';
+  }
+
+  /**
+   * Parses the given string into a NULL RDATA.
+   */
+  public static class NullRdataParser extends RDataParser {
+
+    /**
+     * Valued constructor.
+     *
+     * @param next the next parser to use
+     */
+    public NullRdataParser(final @Nullable RDataParser next) {
+      super(next);
+    }
+
+    @Override
+    protected @Nullable Rdata handle(final @NotNull Type type, final @NotNull String @NotNull [] parts) {
+      return null;
+    }
   }
 }

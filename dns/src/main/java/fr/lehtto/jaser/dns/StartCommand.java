@@ -1,16 +1,17 @@
 package fr.lehtto.jaser.dns;
 
-import fr.lehtto.jaser.core.UdpServer;
+import fr.lehtto.jaser.core.utils.BeautifulListLogger;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 /**
@@ -23,6 +24,12 @@ import picocli.CommandLine.Parameters;
 public class StartCommand implements Runnable {
 
   private static final Logger LOG = LogManager.getLogger(StartCommand.class);
+
+  @Option(
+      names = {"F", "file"},
+      defaultValue = "dnsZone.txt",
+      description = "File containing the DNS zone")
+  private File file;
 
   @Parameters(index = "0", arity = "0..1", defaultValue = "localhost", description = "AddressV4 of the DNS server")
   private InetAddress ip;
@@ -46,52 +53,54 @@ public class StartCommand implements Runnable {
    */
   @Override
   public void run() {
-    Thread serverThread = null;
     // Create a new DNS server
-    try (final @NotNull UdpServer<DnsClientHandler> server = new UdpServer<>(port, ip, DnsClientHandler.class)) {
-      // Start the server in a new thread
-      LOG.debug("Starting server...");
-      serverThread = new Thread(server, "server");
-      serverThread.start();
-
-      readConsoleInputs();
-    } catch (final IOException e) {
-      LOG.error("Error while creating server", e);
+    try {
+      Dns.INSTANCE.load(file);
+    } catch (final IOException ex) {
+      LOG.error("Error while loading the DNS zone", ex);
+      return;
     }
-    waitServerThread(serverThread);
+
+    Dns.INSTANCE.start(ip, port);
+    readConsoleInputs();
+
+    try {
+      Dns.INSTANCE.close();
+    } catch (final IOException e) {
+      LOG.error("Error while closing the DNS server", e);
+    }
   }
 
   /**
    * Reads the console inputs.
    */
   private void readConsoleInputs() {
+    LOG.info("Entering console mode");
+    LOG.info("Type 'h' for help");
     try (final Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8)) {
       boolean running = true;
       while (running) {
         final String line = scanner.nextLine();
         if ("q".equals(line)) {
           running = false;
+        } else if ("r".equals(line)) {
+          BeautifulListLogger.log(LOG, Level.INFO, "Resource records", Dns.INSTANCE.getMasterFile());
+        } else if ("h".equals(line)) {
+          printHelp();
+        } else {
+          LOG.info("Unknown command: {}", line);
         }
       }
     }
   }
 
-
   /**
-   * Waits for the server thread to finish.
-   *
-   * @param thread the thread to wait for
+   * Prints the help.
    */
-  private void waitServerThread(final @Nullable Thread thread) {
-    if (null != thread) {
-      LOG.info("Waiting for server thread to finish...");
-      try {
-        thread.join();
-      } catch (final InterruptedException e) {
-        LOG.error("Server thread interrupted", e);
-        thread.interrupt();
-      }
-      LOG.info("Server thread finished");
-    }
+  private void printHelp() {
+    LOG.info("Commands:");
+    LOG.info("  q: quit");
+    LOG.info("  r: print records");
+    LOG.info("  h: help");
   }
 }

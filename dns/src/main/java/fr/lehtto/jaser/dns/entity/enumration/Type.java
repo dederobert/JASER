@@ -88,7 +88,11 @@ public enum Type {
    * X25 (X.25 address) record.
    */
   X25(19),
-  // Query types
+  /**
+   * AAA (IPv6 address) record.
+   */
+  AAA(28),
+  // Query types,
   /**
    * AXFR (zone transfer) record.
    */
