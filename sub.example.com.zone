@@ -1,0 +1,4 @@
+; ZONE sub.example.com for IN class
+sub.example.com 150 IN A 192.168.0.1
+sub.example.com 150 IN NS ns1.example.com.
+sub.example.com 150 IN NS ns2.example.com.

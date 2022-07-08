@@ -9,6 +9,7 @@ import fr.lehtto.jaser.dns.entity.ResourceRecord;
 import fr.lehtto.jaser.dns.entity.Response;
 import fr.lehtto.jaser.dns.entity.enumration.QR;
 import fr.lehtto.jaser.dns.entity.enumration.RCode;
+import fr.lehtto.jaser.dns.master.file.MasterFile;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,8 +37,10 @@ final class AQueryHandler implements QueryHandler {
     final Question question = query.questions().get(0);
 
     // TODO refactor this
-    final List<ResourceRecord> answers = Dns.INSTANCE.getMasterFile()
+    final List<ResourceRecord> answers = Dns.INSTANCE.getMasterFiles()
         .stream()
+        .map(MasterFile::getRecords)
+        .flatMap(List::stream)
         .filter(resourceRecord -> resourceRecord.recordClass() == question.recordClass())
         .filter(resourceRecord -> resourceRecord.type() == question.type())
         .filter(resourceRecord -> question.nameMatch(resourceRecord.name()))

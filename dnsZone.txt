@@ -1,8 +1,0 @@
-example.com 150 IN A 192.168.0.1
-example.com 150 IN AAA 8888:9999:aaaa:bbbb:cccc:dddd:eeee:ffff
-example.com 150 IN MX 10 mail.example.com
-example.com 150 IN NS ns1.example.com
-example.com 150 IN TXT "1|localhost test"
-example.com 150 IN CNAME www.example.com
-example.com 150 IN SOA ns1.example.com. hostmaster.example.com. 1 1 1 1 1
-example.com 150 IN HINFO "Intel core i5 (x86_64)" "Macintosh 12.4 (Monterey)"

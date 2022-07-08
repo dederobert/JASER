@@ -24,11 +24,12 @@ public class StartCommand implements Runnable {
 
   private static final Logger LOG = LogManager.getLogger(StartCommand.class);
 
+  @SuppressWarnings("MismatchedReadAndWriteOfArray")
   @Option(
-      names = {"F", "file"},
-      defaultValue = "dnsZone.txt",
-      description = "File containing the DNS zone")
-  private File file;
+      names = {"-F", "--file"},
+      paramLabel = "FILE",
+      description = "One or more DNS zone files to load")
+  private File[] files;
 
   @Parameters(index = "0", arity = "0..1", defaultValue = "localhost", description = "AddressV4 of the DNS server")
   private InetAddress ip;
@@ -53,11 +54,8 @@ public class StartCommand implements Runnable {
   @Override
   public void run() {
     // Create a new DNS server and start it
-    try {
+    for (final File file : files) {
       Dns.INSTANCE.load(file);
-    } catch (final IOException ex) {
-      LOG.error("Error while loading the DNS zone", ex);
-      return;
     }
     Dns.INSTANCE.start(ip, port);
 
