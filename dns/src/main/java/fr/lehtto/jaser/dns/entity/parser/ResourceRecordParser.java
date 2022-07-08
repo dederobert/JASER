@@ -3,6 +3,7 @@ package fr.lehtto.jaser.dns.entity.parser;
 import fr.lehtto.jaser.core.utils.EnumUtils;
 import fr.lehtto.jaser.core.utils.NumberUtils;
 import fr.lehtto.jaser.core.utils.StringUtils;
+import fr.lehtto.jaser.dns.entity.DomainName;
 import fr.lehtto.jaser.dns.entity.ResourceRecord;
 import fr.lehtto.jaser.dns.entity.enumration.DnsClass;
 import fr.lehtto.jaser.dns.entity.enumration.Type;
@@ -65,7 +66,7 @@ public final class ResourceRecordParser {
     final Rdata rdata1 = RDataFactory.create(type, rdata);
 
     return ResourceRecord.builder()
-        .name(name)
+        .name(DomainName.of(name))
         .type(type)
         .recordClass(clazz)
         .ttl(ttl)

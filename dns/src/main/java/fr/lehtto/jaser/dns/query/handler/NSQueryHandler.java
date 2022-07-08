@@ -14,20 +14,20 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * {@link QueryHandler Query handler} for A (IPv4) query.
+ * Query handler for NS queries.
  *
  * @author lehtto
- * @version 0.1.0
+ * @since 0.2.0
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
-final class AQueryHandler implements QueryHandler {
+final class NSQueryHandler implements QueryHandler{
 
-  static final AQueryHandler INSTANCE = new AQueryHandler();
+  static final QueryHandler INSTANCE = new NSQueryHandler();
 
   /**
    * Default constructor.
    */
-  private AQueryHandler() {
+  private NSQueryHandler() {
     // This constructor should not be called
   }
 
@@ -49,6 +49,8 @@ final class AQueryHandler implements QueryHandler {
             .data(resourceRecord.data())
             .build())
         .toList();
+
+    // TODO : Add support for additional records
 
     // Create response header's flags
     final Flags flags = query.header().flags().toBuilder().qr(QR.RESPONSE)

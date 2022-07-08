@@ -28,6 +28,7 @@ public class StartCommand implements Runnable {
   @Option(
       names = {"-F", "--file"},
       paramLabel = "FILE",
+      required = true,
       description = "One or more DNS zone files to load")
   private File[] files;
 

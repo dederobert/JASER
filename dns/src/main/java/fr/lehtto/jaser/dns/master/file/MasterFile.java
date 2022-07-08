@@ -22,7 +22,6 @@ public class MasterFile {
   private final List<ResourceRecord> records = new ArrayList<>();
   private DnsClass dnsClass;
 
-
   /**
    * Adds a record to the master file.
    *
@@ -85,5 +84,14 @@ public class MasterFile {
     if (null != resourceRecords) {
       records.addAll(resourceRecords);
     }
+  }
+
+  /**
+   * Gets the zone's class.
+   *
+   * @return the zone's class
+   */
+  public DnsClass getDnsClass() {
+    return dnsClass;
   }
 }

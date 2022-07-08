@@ -1,5 +1,6 @@
 package fr.lehtto.jaser.dns.master.file;
 
+import fr.lehtto.jaser.dns.entity.DomainName;
 import fr.lehtto.jaser.dns.entity.ResourceRecord;
 import fr.lehtto.jaser.dns.entity.enumration.DnsClass;
 import fr.lehtto.jaser.dns.entity.enumration.Type;
@@ -43,10 +44,10 @@ public final class MasterFileParser {
     // Determine the zone name from the file name.
     final String domain;
     if (masterFile.getName().endsWith(".zone")) {
-      domain = masterFile.getName().substring(0, masterFile.getName().length() - 5);
+      domain = masterFile.getName().substring(0, masterFile.getName().length() - 4);
     } else {
       LOG.warn("Please consider using a .zone file.");
-      domain = masterFile.getName();
+      domain = masterFile.getName() + '.';
     }
 
     // Read the file.
@@ -56,6 +57,7 @@ public final class MasterFileParser {
 
     // Parse the file.
     final ParserInputContext parserInputContext = new ParserInputContext(lines, domain);
+    // TODO remove this part.
     while (parserInputContext.hasNextLine()) {
       final String line = parserInputContext.nextLine();
       if (line.isEmpty()) {
@@ -86,7 +88,7 @@ public final class MasterFileParser {
       final String[] data = retrieveData(parsedTokens);
 
       final ResourceRecord resourceRecord = ResourceRecord.builder()
-          .name(recordDomain)
+          .name(DomainName.of(recordDomain))
           .type(type)
           .ttl(ttl)
           .recordClass(dnsClass)

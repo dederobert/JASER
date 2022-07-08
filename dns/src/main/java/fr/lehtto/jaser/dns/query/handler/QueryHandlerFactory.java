@@ -19,7 +19,7 @@ public final class QueryHandlerFactory {
   }
 
   /**
-   * Create a new {@link QueryHandler Query handler} for the given {@link Query query}.
+   * Creates a new {@link QueryHandler Query handler} for the given {@link Query query}.
    *
    * @param query the query to handle
    * @return the handler for the query
@@ -28,6 +28,8 @@ public final class QueryHandlerFactory {
     // Current implementation only handles 1 question per query (check type of first question)
     return switch (query.questions().get(0).type()) {
       case A -> AQueryHandler.INSTANCE;
+      case NS -> NSQueryHandler.INSTANCE;
+      case CNAME -> CnameQueryHandler.INSTANCE;
       default -> throw new IllegalArgumentException("Unsupported query type");
     };
   }
