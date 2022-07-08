@@ -4,7 +4,6 @@ import fr.lehtto.jaser.dns.entity.enumration.DnsClass;
 import fr.lehtto.jaser.dns.entity.enumration.Type;
 import fr.lehtto.jaser.dns.entity.rdata.Rdata;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +20,7 @@ import org.jetbrains.annotations.Range;
 public record ResourceRecord(
     boolean useCompression,
     short pointer,
-    @NotNull String name,
+    @NotNull DomainName name,
     @NotNull Type type,
     @NotNull DnsClass recordClass,
     @Range(from = 0, to = Integer.MAX_VALUE) int ttl,
@@ -57,7 +56,7 @@ public record ResourceRecord(
   @Override
   public byte @NotNull [] getBytes() {
 
-    final byte[] nameBytes = name.getBytes(StandardCharsets.UTF_8);
+    final byte[] nameBytes = name.toBytes();
     final byte[] typeBytes = type.getBytes();
     final byte[] recordClassBytes = recordClass.getBytes();
     final byte[] dataBytes = data.getBytes();
@@ -91,7 +90,7 @@ public record ResourceRecord(
 
     private boolean useCompression;
     private Short pointer;
-    private String name;
+    private DomainName name;
     private Type type;
     private DnsClass recordClass;
     private int ttl;
@@ -138,6 +137,7 @@ public record ResourceRecord(
      * @return the builder
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
+    // TODO : refactor pointer mechanism
     public Builder pointer(final @Range(from = 0, to = 16_383) short offset) {
       this.useCompression = true;
       pointer = (short) (offset | 0xc000);
@@ -150,7 +150,7 @@ public record ResourceRecord(
      * @param name the name of the resource record.
      * @return the builder.
      */
-    public Builder name(final @NotNull String name) {
+    public Builder name(final @NotNull DomainName name) {
       this.useCompression = false;
       this.name = name;
       return this;
@@ -218,7 +218,7 @@ public record ResourceRecord(
           throw new IllegalArgumentException("name is not set while compression is disabled");
         }
         // HACK to avoid null pointer exception.
-        name = "";
+        name = DomainName.of("");
       }
       if (null == type) {
         throw new IllegalArgumentException("type is not set.");

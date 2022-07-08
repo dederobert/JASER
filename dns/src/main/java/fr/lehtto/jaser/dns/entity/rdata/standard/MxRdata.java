@@ -1,12 +1,12 @@
 package fr.lehtto.jaser.dns.entity.rdata.standard;
 
 import fr.lehtto.jaser.core.utils.NumberUtils;
+import fr.lehtto.jaser.dns.entity.DomainName;
 import fr.lehtto.jaser.dns.entity.enumration.Type;
 import fr.lehtto.jaser.dns.entity.parser.InvalidDnsZoneEntryException;
 import fr.lehtto.jaser.dns.entity.rdata.RDataParser;
 import fr.lehtto.jaser.dns.entity.rdata.Rdata;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,13 +16,14 @@ import org.jetbrains.annotations.Nullable;
  * @author lehtto
  * @version 0.1.0
  */
-public record MxRdata(short preference, @NotNull String exchange) implements Rdata {
+public record MxRdata(short preference, @NotNull DomainName exchange) implements Rdata {
 
   @Override
   public byte @NotNull [] getBytes() {
-    final ByteBuffer buffer = ByteBuffer.allocate(2 + exchange.length());
+    final byte[] exchangeBytes = exchange.toBytes();
+    final ByteBuffer buffer = ByteBuffer.allocate(2 + exchangeBytes.length);
     buffer.putShort(preference);
-    buffer.put(exchange.getBytes(StandardCharsets.UTF_8));
+    buffer.put(exchangeBytes);
     return buffer.array();
   }
 
@@ -61,7 +62,7 @@ public record MxRdata(short preference, @NotNull String exchange) implements Rda
         throw new InvalidDnsZoneEntryException("MX RDATA must contain a valid number for the preference. Contains %s",
             parts[0]);
       }
-      return new MxRdata(Short.parseShort(parts[0]), parts[1]);
+      return new MxRdata(Short.parseShort(parts[0]), DomainName.of(parts[1]));
     }
   }
 }

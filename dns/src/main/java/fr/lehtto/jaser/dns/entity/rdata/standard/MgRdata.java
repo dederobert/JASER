@@ -1,10 +1,10 @@
 package fr.lehtto.jaser.dns.entity.rdata.standard;
 
+import fr.lehtto.jaser.dns.entity.DomainName;
 import fr.lehtto.jaser.dns.entity.enumration.Type;
 import fr.lehtto.jaser.dns.entity.parser.InvalidDnsZoneEntryException;
 import fr.lehtto.jaser.dns.entity.rdata.RDataParser;
 import fr.lehtto.jaser.dns.entity.rdata.Rdata;
-import java.nio.charset.StandardCharsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,11 +14,11 @@ import org.jetbrains.annotations.Nullable;
  * @author lehtto
  * @version 0.1.0
  */
-public record MgRdata(@NotNull String mgmName) implements Rdata {
+public record MgRdata(@NotNull DomainName mgmName) implements Rdata {
 
   @Override
   public byte @NotNull [] getBytes() {
-    return mgmName.getBytes(StandardCharsets.UTF_8);
+    return mgmName.toBytes();
   }
 
   /**
@@ -44,7 +44,7 @@ public record MgRdata(@NotNull String mgmName) implements Rdata {
       if (1 != parts.length) {
         throw new InvalidDnsZoneEntryException("MG RDATA must contain exactly 1 part.");
       }
-      return new MgRdata(parts[0]);
+      return new MgRdata(DomainName.of(parts[0]));
     }
   }
 }

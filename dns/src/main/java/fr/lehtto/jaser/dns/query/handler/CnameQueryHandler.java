@@ -14,20 +14,20 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * {@link QueryHandler Query handler} for A (IPv4) query.
+ * Query handler for CNAME queries.
  *
  * @author lehtto
- * @version 0.1.0
+ * @since 0.2.0
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
-final class AQueryHandler implements QueryHandler {
+final class CnameQueryHandler implements QueryHandler{
 
-  static final AQueryHandler INSTANCE = new AQueryHandler();
+  static final QueryHandler INSTANCE = new CnameQueryHandler();
 
   /**
    * Default constructor.
    */
-  private AQueryHandler() {
+  private CnameQueryHandler() {
     // This constructor should not be called
   }
 

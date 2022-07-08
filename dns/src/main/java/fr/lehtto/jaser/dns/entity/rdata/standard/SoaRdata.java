@@ -1,11 +1,11 @@
 package fr.lehtto.jaser.dns.entity.rdata.standard;
 
 import fr.lehtto.jaser.core.utils.NumberUtils;
+import fr.lehtto.jaser.dns.entity.DomainName;
 import fr.lehtto.jaser.dns.entity.enumration.Type;
 import fr.lehtto.jaser.dns.entity.rdata.RDataParser;
 import fr.lehtto.jaser.dns.entity.rdata.Rdata;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,14 +15,16 @@ import org.jetbrains.annotations.Nullable;
  * @author lehtto
  * @version 0.1.0
  */
-public record SoaRdata(@NotNull String origin, @NotNull String contact, int serial, int refresh, int retry, int expire,
-                       int minimum) implements Rdata {
+public record SoaRdata(@NotNull DomainName origin, @NotNull DomainName contact, int serial, int refresh, int retry,
+                       int expire, int minimum) implements Rdata {
 
   @Override
   public byte @NotNull [] getBytes() {
-    final ByteBuffer buffer = ByteBuffer.allocate(origin.length() + contact.length() + 20);
-    buffer.put(origin.getBytes(StandardCharsets.UTF_8));
-    buffer.put(contact.getBytes(StandardCharsets.UTF_8));
+    final byte[] originBytes = origin.toBytes();
+    final byte[] contactBytes = contact.toBytes();
+    final ByteBuffer buffer = ByteBuffer.allocate(originBytes.length + contactBytes.length + 20);
+    buffer.put(originBytes);
+    buffer.put(contactBytes);
     buffer.putInt(serial);
     buffer.putInt(refresh);
     buffer.putInt(retry);
@@ -81,8 +83,9 @@ public record SoaRdata(@NotNull String origin, @NotNull String contact, int seri
       if (!NumberUtils.isParsable(parts[6])) {
         throw new IllegalArgumentException("Minimum TTL must be a parsable integer");
       }
-      return new SoaRdata(parts[0], parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
-          Integer.parseInt(parts[4]), Integer.parseInt(parts[5]), Integer.parseInt(parts[6]));
+      return new SoaRdata(DomainName.of(parts[0]), DomainName.of(parts[1]), Integer.parseInt(parts[2]),
+          Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), Integer.parseInt(parts[5]),
+          Integer.parseInt(parts[6]));
     }
   }
 }
