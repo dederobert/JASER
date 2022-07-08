@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * DNS query.
@@ -37,5 +38,87 @@ public record Query(@NotNull Header header, @NotNull List<Question> questions) {
     final List<Question> questions = QuestionParser.parse(bytes, HEADER_SIZE, length);
 
     return new Query(header, questions);
+  }
+
+  /**
+   * Creates Builder for the query.
+   *
+   * @return the builder
+   */
+  public static @NotNull Builder builder() {
+    return new Builder();
+  }
+
+  /**
+   * Builder for the query.
+   *
+   * @return the builder
+   */
+  public @NotNull Builder toBuilder() {
+    return new Builder(this);
+  }
+
+  /**
+   * Builder for the query.
+   */
+  public static final class Builder {
+
+    private @Nullable Header header;
+    private @Nullable List<Question> questions;
+
+    /**
+     * Default constructor.
+     */
+    private Builder() {
+      header = null;
+      questions = null;
+    }
+
+    /**
+     * Constructor for the builder.
+     *
+     * @param query the query to copy
+     */
+    private Builder(final @NotNull Query query) {
+      header = query.header;
+      questions = query.questions;
+    }
+
+    /**
+     * Sets the header.
+     *
+     * @param header the header
+     * @return the builder
+     */
+    public @NotNull Builder header(final @NotNull Header header) {
+      this.header = header;
+      return this;
+    }
+
+    /**
+     * Sets the questions.
+     *
+     * @param questions the questions
+     * @return the builder
+     */
+    public @NotNull Builder questions(final @NotNull List<Question> questions) {
+      this.questions = questions;
+      return this;
+    }
+
+    /**
+     * Builds the query.
+     *
+     * @return the query
+     */
+    public @NotNull Query build() {
+      if (null == header) {
+        throw new IllegalStateException("Header is not set");
+      }
+      if (null == questions) {
+        throw new IllegalStateException("Questions is not set");
+      }
+      return new Query(header, questions);
+    }
   }
 }

@@ -28,7 +28,7 @@ public class MasterFile {
    * @param resourceRecord the resource record to add
    * @throws InvalidDnsZoneEntryException if the record is invalid
    */
-  void addRecord(final @NotNull ResourceRecord resourceRecord) throws InvalidDnsZoneEntryException {
+  public void addRecord(final @NotNull ResourceRecord resourceRecord) throws InvalidDnsZoneEntryException {
     // Check if the record is valid.
     if (null == dnsClass) {
       dnsClass = resourceRecord.recordClass();

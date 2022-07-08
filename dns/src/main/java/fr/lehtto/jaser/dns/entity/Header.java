@@ -82,10 +82,10 @@ public record Header(short id, @NotNull Flags flags, short qdcount, short ancoun
     Builder() {
       id = -1;
       flags = null;
-      qdcount = -1;
-      ancount = -1;
-      nscount = -1;
-      arcount = -1;
+      qdcount = 0;
+      ancount = 0;
+      nscount = 0;
+      arcount = 0;
     }
 
     /**
@@ -179,18 +179,6 @@ public record Header(short id, @NotNull Flags flags, short qdcount, short ancoun
       }
       if (null == flags) {
         throw new IllegalStateException("Flags are null");
-      }
-      if (-1 == qdcount) {
-        throw new IllegalStateException("qdcount is not set");
-      }
-      if (-1 == ancount) {
-        throw new IllegalStateException("ancount is not set");
-      }
-      if (-1 == nscount) {
-        throw new IllegalStateException("nscount is not set");
-      }
-      if (-1 == arcount) {
-        throw new IllegalStateException("arcount is not set");
       }
       return new Header(id, flags, qdcount, ancount, nscount, arcount);
     }
