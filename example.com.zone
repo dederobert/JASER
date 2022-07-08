@@ -1,0 +1,22 @@
+; ZONE example.com for IN class
+$TTL 20
+$CLASS IN
+      150 IN SOA ns1.example.com. hostmaster.example.com. 1 1 1 1 1
+      150 IN A 192.168.0.1
+forum 150 IN A 192.168.0.1
+          IN AAA 8888:9999:aaaa:bbbb:cccc:dddd:eeee:ffff
+          IN 150 MX 10 mail.example.com ; TTL after class
+      150    NS ns1.example.com
+             TXT "1|localhost test"
+
+; ZONE example.com for IN class
+test.example.fr. 150 IN A 192.168.0.1
+
+; ZONE example.com for IN class
+$ORIGIN example.be.
+ 150 IN A 192.168.0.1
+
+; ZONE sub.example.com for IN class
+$INCLUDE sub.example.com.zone
+example.com. 150 IN CNAME www.example.com
+example.com. 150 IN HINFO "Intel core i5 (x86_64)" "Macintosh 12.4 (Monterey)"
