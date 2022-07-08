@@ -76,4 +76,17 @@ public record AddressV4(byte @NotNull [] address) implements Writable {
         Byte.toUnsignedInt(address[2]) + '.' +
         Byte.toUnsignedInt(address[3]) + '}';
   }
+
+  /**
+   * Returns the address in dotted notation.
+   *
+   * @return The address in dotted notation.
+   */
+  public String toDottedDecimal() {
+    return String.format("%d.%d.%d.%d",
+        Byte.toUnsignedInt(address[0]),
+        Byte.toUnsignedInt(address[1]),
+        Byte.toUnsignedInt(address[2]),
+        Byte.toUnsignedInt(address[3]));
+  }
 }

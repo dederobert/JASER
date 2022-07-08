@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 /**
  * DNS main class.
@@ -25,20 +26,20 @@ public final class Dns implements AutoCloseable {
   public static final Dns INSTANCE = new Dns();
 
   private static final Logger LOG = LogManager.getLogger(Dns.class);
-
+  private final List<MasterFile> masterFiles = new ArrayList<>();
   private Thread serverThread;
   private UdpServer<DnsClientHandler> server;
-  private final List<MasterFile> masterFiles = new ArrayList<>();
 
   /**
    * Valued constructor.
    */
-  private Dns(){}
+  private Dns() {
+  }
 
   /**
    * Starts the DNS server.
    *
-   * @param ip  address to listen on
+   * @param ip   address to listen on
    * @param port port to listen on
    */
   void start(final @NotNull InetAddress ip, final int port) {
@@ -82,5 +83,15 @@ public final class Dns implements AutoCloseable {
       serverThread.interrupt();
       throw new IOException("Error while waiting for server thread to terminate", e);
     }
+  }
+
+  /**
+   * Sets master files.
+   *
+   * @param masterFiles the master files to set
+   */
+  @VisibleForTesting
+  void initializeMasterFiles(final List<MasterFile> masterFiles) {
+    this.masterFiles.addAll(masterFiles);
   }
 }
