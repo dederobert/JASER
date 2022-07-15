@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -24,7 +25,7 @@ import picocli.CommandLine.Parameters;
 public class StartCommand implements Runnable {
 
   private static final Logger LOG = LogManager.getLogger(StartCommand.class);
-  private MetricsService metricsService;
+  private @Nullable MetricsService metricsService;
 
   @SuppressWarnings("MismatchedReadAndWriteOfArray")
   @Option(
@@ -101,6 +102,8 @@ public class StartCommand implements Runnable {
     } catch (final IOException e) {
       LOG.error("Error while closing the DNS server", e);
     }
-    metricsService.close();
+    if (null != metricsService) {
+      metricsService.close();
+    }
   }
 }

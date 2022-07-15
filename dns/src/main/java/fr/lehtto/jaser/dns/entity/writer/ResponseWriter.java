@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * Writes a DNS response to a buffer.
  *
  * @author Lehtto
+ * @version 0.2.0
  * @since 0.1.0
  */
 public final class ResponseWriter {
@@ -29,12 +30,14 @@ public final class ResponseWriter {
    * Writes a DNS response to a buffer.
    *
    * @param response the response to write to the buffer
-   * @param buffer the buffer to write to
+   * @param buffer   the buffer to write to
    * @return the number of bytes written
    */
   @Contract(mutates = "param2")
   public static int write(final @NotNull Response response, final byte @NotNull [] buffer) {
     LOG.debug("Write response");
+
+    response.resolvePointers();
 
     // Write the header
     int i = Writer.write(response.header(), buffer, 0);
@@ -50,7 +53,7 @@ public final class ResponseWriter {
     }
 
     // Write the authorityRecords
-    for (final ResourceRecord authority: response.authorityRecords()) {
+    for (final ResourceRecord authority : response.authorityRecords()) {
       i += Writer.write(authority, buffer, i);
     }
 

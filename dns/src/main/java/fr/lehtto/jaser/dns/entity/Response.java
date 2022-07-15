@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
  * DNS response entity.
  *
  * @author Lehtto
+ * @version 0.2.0
  * @since 0.1.0
  */
 public record Response(@NotNull Header header,
@@ -31,6 +32,23 @@ public record Response(@NotNull Header header,
    */
   public Builder toBuilder() {
     return new Builder(this);
+  }
+
+  /**
+   * Resolves pointers.
+   *
+   * @since 0.2.0
+   */
+  public void resolvePointers() {
+    for (final ResourceRecord resourceRecord : answerRecords) {
+      resourceRecord.resolvePointer(this);
+    }
+    for (final ResourceRecord resourceRecord : authorityRecords) {
+      resourceRecord.resolvePointer(this);
+    }
+    for (final ResourceRecord resourceRecord : additionalRecords) {
+      resourceRecord.resolvePointer(this);
+    }
   }
 
   /**
