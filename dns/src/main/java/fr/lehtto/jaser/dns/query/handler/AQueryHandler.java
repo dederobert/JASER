@@ -18,7 +18,8 @@ import org.jetbrains.annotations.NotNull;
  * {@link QueryHandler Query handler} for A (IPv4) query.
  *
  * @author lehtto
- * @version 0.1.0
+ * @since  0.1.0
+ * @version 0.2.0
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
 final class AQueryHandler implements QueryHandler {
@@ -44,7 +45,7 @@ final class AQueryHandler implements QueryHandler {
         .withDomain(question.name())
         .getRecordsStream()
         .map(resourceRecord -> ResourceRecord.builder()
-            .pointer((short) 12)
+            .pointer(question)
             .type(resourceRecord.type())
             .recordClass(resourceRecord.recordClass())
             .ttl(resourceRecord.ttl())

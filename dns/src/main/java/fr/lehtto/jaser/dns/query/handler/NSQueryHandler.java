@@ -44,7 +44,7 @@ final class NSQueryHandler implements QueryHandler{
         .withDomain(question.name())
         .getRecordsStream()
         .map(resourceRecord -> ResourceRecord.builder()
-            .pointer((short) 12)
+            .pointer(question)
             .type(resourceRecord.type())
             .recordClass(resourceRecord.recordClass())
             .ttl(resourceRecord.ttl())
