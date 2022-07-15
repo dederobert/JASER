@@ -13,10 +13,32 @@ Collection of several Java servers.
 
 ## About
 
-Jaser is a collection of several Java servers. It includes:
+Jaser is a collection of several servers written in Java. It includes:
 
 - DNS Server
 
-Planned:
+Planned servers:
 
 - DHCP Server
+
+### Structure of the project
+
+<img src="https://raw.githubusercontent.com/dederobert/JASER/main/docs/structure.png" alt="Structure of the project" />
+
+Modules :
+
+- [BOM](#bom) Bill of Materials
+- [Core](#core) the core module
+- [DNS Server](#dns-server) the DNS server
+
+## BOM
+
+The Bill of Materials (BOM) is a list of all dependencies of the project.
+
+## Core
+
+Core is the core module of the project. It contains generic UDP and TCP servers classes and some utility classes.
+
+## DNS Server
+
+DNS Server is a server that answers DNS queries.
