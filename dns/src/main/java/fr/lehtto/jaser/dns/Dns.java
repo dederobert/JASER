@@ -4,14 +4,17 @@ import fr.lehtto.jaser.core.UdpServer;
 import fr.lehtto.jaser.dns.entity.parser.InvalidDnsZoneEntryException;
 import fr.lehtto.jaser.dns.master.file.MasterFile;
 import fr.lehtto.jaser.dns.master.file.MasterFileParser;
+import fr.lehtto.jaser.dns.metrics.MetricsService;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
 /**
@@ -29,6 +32,7 @@ public final class Dns implements AutoCloseable {
   private final List<MasterFile> masterFiles = new ArrayList<>();
   private Thread serverThread;
   private UdpServer<DnsClientHandler> server;
+  private @Nullable MetricsService metricsService;
 
   /**
    * Valued constructor.
@@ -68,6 +72,8 @@ public final class Dns implements AutoCloseable {
       final MasterFile masterFile = MasterFileParser.parse(file);
       LOG.info("Loaded {} records", masterFile.size());
       masterFiles.add(masterFile);
+      getMetricsService().map(MetricsService::getMetrics)
+          .ifPresent(metrics -> metrics.incrementZoneSize(masterFile.size()));
     } catch (final InvalidDnsZoneEntryException e) {
       LOG.error("Invalid DNS zone entry: {}", e.getMessage());
     }
@@ -93,5 +99,23 @@ public final class Dns implements AutoCloseable {
   @VisibleForTesting
   void initializeMasterFiles(final List<MasterFile> masterFiles) {
     this.masterFiles.addAll(masterFiles);
+  }
+
+  /**
+   * Gets the metrics service.
+   *
+   * @return the metrics service
+   */
+  public @NotNull Optional<MetricsService> getMetricsService() {
+    return Optional.ofNullable(metricsService);
+  }
+
+  /**
+   * Sets the metrics service.
+   *
+   * @param metricsService the metrics service to set
+   */
+  void setMetricsService(final @Nullable MetricsService metricsService) {
+    this.metricsService = metricsService;
   }
 }
