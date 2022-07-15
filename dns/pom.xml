@@ -32,14 +32,27 @@
   </dependencyManagement>
 
   <dependencies>
+    <!-- Core -->
+    <dependency>
+      <groupId>fr.lehtto</groupId>
+      <artifactId>jaser-core</artifactId>
+    </dependency>
+
+    <!-- Annotations -->
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
     </dependency>
 
+    <!-- MicroMeter -->
     <dependency>
-      <groupId>fr.lehtto</groupId>
-      <artifactId>jaser-core</artifactId>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.prometheus</groupId>
+      <artifactId>simpleclient_httpserver</artifactId>
     </dependency>
 
     <!-- TEST DEPENDENCIES -->

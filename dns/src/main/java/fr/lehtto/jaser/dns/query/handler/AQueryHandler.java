@@ -10,6 +10,7 @@ import fr.lehtto.jaser.dns.entity.Response;
 import fr.lehtto.jaser.dns.entity.enumration.QR;
 import fr.lehtto.jaser.dns.entity.enumration.RCode;
 import fr.lehtto.jaser.dns.master.file.MasterFileQuerier;
+import fr.lehtto.jaser.dns.metrics.MetricsService;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +34,7 @@ final class AQueryHandler implements QueryHandler {
 
   @Override
   public @NotNull Response handleValidatedQuery(final @NotNull Query query) {
+    Dns.INSTANCE.getMetricsService().map(MetricsService::getMetrics).ifPresent(metrics -> metrics.incrementAQuery(1));
     // Current implementation only supports one question
     final Question question = query.questions().get(0);
 

@@ -2,6 +2,7 @@ package fr.lehtto.jaser.dns;
 
 import fr.lehtto.jaser.core.console.Cui;
 import fr.lehtto.jaser.dns.console.RecordsCommandHandler;
+import fr.lehtto.jaser.dns.metrics.MetricsService;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -23,6 +24,7 @@ import picocli.CommandLine.Parameters;
 public class StartCommand implements Runnable {
 
   private static final Logger LOG = LogManager.getLogger(StartCommand.class);
+  private MetricsService metricsService;
 
   @SuppressWarnings("MismatchedReadAndWriteOfArray")
   @Option(
@@ -31,6 +33,26 @@ public class StartCommand implements Runnable {
       required = true,
       description = "One or more DNS zone files to load")
   private File[] files;
+
+  @Option(
+      names = {"-M", "--metrics"},
+      defaultValue = "false",
+      description = "Enable metrics server")
+  private boolean metricsEnabled;
+
+  @Option(
+      names = "--metrics-address",
+      paramLabel = "IP",
+      defaultValue = "localhost",
+      description = "Metrics server address")
+  private InetAddress metricsAddress;
+
+  @Option(
+      names = "--metrics-port",
+      paramLabel = "PORT",
+      defaultValue = "8080",
+      description = "Metrics server port")
+  private int metricsPort;
 
   @Parameters(index = "0", arity = "0..1", defaultValue = "localhost", description = "AddressV4 of the DNS server")
   private InetAddress ip;
@@ -54,6 +76,13 @@ public class StartCommand implements Runnable {
    */
   @Override
   public void run() {
+    // Starts the metricsService server
+    if (metricsEnabled) {
+      metricsService = new MetricsService(metricsAddress, metricsPort);
+      metricsService.start();
+      Dns.INSTANCE.setMetricsService(metricsService);
+    }
+
     // Create a new DNS server and start it
     for (final File file : files) {
       Dns.INSTANCE.load(file);
@@ -72,5 +101,6 @@ public class StartCommand implements Runnable {
     } catch (final IOException e) {
       LOG.error("Error while closing the DNS server", e);
     }
+    metricsService.close();
   }
 }

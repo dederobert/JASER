@@ -10,6 +10,7 @@ import fr.lehtto.jaser.dns.entity.Response;
 import fr.lehtto.jaser.dns.entity.enumration.QR;
 import fr.lehtto.jaser.dns.entity.enumration.RCode;
 import fr.lehtto.jaser.dns.master.file.MasterFileQuerier;
+import fr.lehtto.jaser.dns.metrics.MetricsService;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  * @since 0.2.0
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
-final class CnameQueryHandler implements QueryHandler{
+final class CnameQueryHandler implements QueryHandler {
 
   static final QueryHandler INSTANCE = new CnameQueryHandler();
 
@@ -33,6 +34,8 @@ final class CnameQueryHandler implements QueryHandler{
 
   @Override
   public @NotNull Response handleValidatedQuery(final @NotNull Query query) {
+    Dns.INSTANCE.getMetricsService().map(MetricsService::getMetrics)
+        .ifPresent(metrics -> metrics.incrementCnameQuery(1));
     // Current implementation only supports one question
     final Question question = query.questions().get(0);
 
