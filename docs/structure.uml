@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>MODULES</ID>
+  <OriginalElement>mdl-core</OriginalElement>
+  <nodes>
+    <node x="0.0" y="0.0">mdl-dns</node>
+    <node x="98.0" y="0.0">mdl-core</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="mdl-dns" target="mdl-core" relationship="MODULE">
+      <point x="24.0" y="-0.0" />
+      <point x="-27.5" y="-0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="1.0" showDependencies="false" x="76.5" y="12.5" />
+  <SelectedNodes>
+    <node>mdl-core</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Show Borders</Category>
+    <Category>Show Neighbours of Selected Nodes</Category>
+  </Categories>
+</Diagram>
+
