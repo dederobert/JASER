@@ -27,7 +27,7 @@ jobs:
     - name: Cache SonarCloud packages
       uses: actions/cache@v1
       with:
-        paths: ~/.sonar/cache
+        path: ~/.sonar/cache
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
     - name: Build with Maven
