@@ -75,18 +75,36 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.0.0-M7</version>
         </plugin>
+
+        <plugin>
+          <groupId>se.bjurr.gitchangelog</groupId>
+          <artifactId>git-changelog-maven-plugin</artifactId>
+          <version>1.92</version>
+          <executions>
+            <execution>
+              <id>GenerateGitChangelog</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>git-changelog</goal>
+              </goals>
+              <configuration>
+                <templateFile>./changelog_template.mustache</templateFile>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
 
     <plugins>
       <plugin>
-        <groupId>org.codehaus.gmavenplus</groupId>
-        <artifactId>gmavenplus-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
 
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
+        <groupId>se.bjurr.gitchangelog</groupId>
+        <artifactId>git-changelog-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

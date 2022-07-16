@@ -1,0 +1,25 @@
+# Changelog of JASER
+{{#tags}}
+## {{name}}
+    {{#ifContainsType commits type='feat'}}
+### Features
+
+      {{#commits}}
+        {{#ifCommitType . type='feat'}}
+- {{#eachCommitScope .}} **{{.}}** {{/eachCommitScope}} {{{commitDescription .}}} ([{{hash}}](https://github.com/{{ownerName}}/{{repoName}}/commit/{{hash}}))
+        {{/ifCommitType}}
+      {{/commits}}
+    {{/ifContainsType}}
+
+
+    {{#ifContainsType commits type='fix'}}
+### Bug Fixes
+
+      {{#commits}}
+        {{#ifCommitType . type='fix'}}
+- {{#eachCommitScope .}} **{{.}}** {{/eachCommitScope}} {{{commitDescription .}}} ([{{hash}}](https://github.com/{{ownerName}}/{{repoName}}/commit/{{hash}}))
+        {{/ifCommitType}}
+      {{/commits}}
+    {{/ifContainsType}}
+
+{{/tags}}
