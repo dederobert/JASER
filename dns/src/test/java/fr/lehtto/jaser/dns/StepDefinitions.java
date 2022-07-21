@@ -47,9 +47,7 @@ public class StepDefinitions {
         .data(new ARdata(AddressV4.of("192.168.1.1")))
         .build());
 
-    Dns.INSTANCE.initializeMasterFiles(List.of(
-        masterFile
-    ));
+    Dns.INSTANCE.initializeMasterFiles(masterFile);
   }
 
   @Given("I have {string} as hostname")
@@ -70,7 +68,7 @@ public class StepDefinitions {
             .qdcount((short) 1)
             .build())
         .questions(List.of(Question.builder()
-            .name(hostname)
+            .name(DomainName.of(hostname))
             .recordClass(DnsClass.IN)
             .type(Type.A)
             .build()))

@@ -1,5 +1,6 @@
 package fr.lehtto.jaser.dns.entity.parser;
 
+import fr.lehtto.jaser.dns.entity.DomainName;
 import fr.lehtto.jaser.dns.entity.Question;
 import fr.lehtto.jaser.dns.entity.enumration.DnsClass;
 import fr.lehtto.jaser.dns.entity.enumration.Type;
@@ -33,16 +34,20 @@ public final class QuestionParser {
    * @return the parsed question
    */
   public static @NotNull List<Question> parse(final byte @NotNull [] bytes, final int offset, final int length) {
-    final StringBuilder name = new StringBuilder(length - offset);
     int i = offset;
 
     final List<Question> questions = new ArrayList<>();
-    while (i < length) {
-      while (0 != bytes[i]) {
-        name.append(new String(bytes, i, 1, StandardCharsets.UTF_8));
-        i++;
-      }
 
+    final List<String> labels = new ArrayList<>();
+    while (0 != bytes[i]) {
+      final int labelSize = bytes[i];
+      i++;
+      labels.add(new String(bytes, i, labelSize, StandardCharsets.UTF_8));
+      i += labelSize;
+    }
+
+
+    while (i < length) {
       final byte qTypeByte1 = bytes[i + 1];
       final byte qTypeByte2 = bytes[i + 2];
       final byte qClassByte1 = bytes[i + 3];
@@ -55,8 +60,12 @@ public final class QuestionParser {
       final short qClassValue = (short) ((qClassByte1 & 0xFFFF) << 8 | qClassByte2 & 0x00FF);
       final DnsClass dnsClass = DnsClass.fromValue(qClassValue)
           .orElseThrow(() -> new IllegalArgumentException("Invalid class value: " + qClassValue));
-      questions.add(new Question(name.toString(), type, dnsClass));
-      i+=5;
+      questions.add(Question.builder()
+          .name(DomainName.of(labels.toArray(String[]::new)))
+          .type(type)
+          .recordClass(dnsClass)
+          .build());
+      i += 5;
     }
     return questions;
   }

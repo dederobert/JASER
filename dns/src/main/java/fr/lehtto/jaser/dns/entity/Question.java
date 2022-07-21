@@ -1,9 +1,8 @@
 package fr.lehtto.jaser.dns.entity;
 
-import fr.lehtto.jaser.core.utils.StringUtils;
 import fr.lehtto.jaser.dns.entity.enumration.DnsClass;
 import fr.lehtto.jaser.dns.entity.enumration.Type;
-import java.nio.charset.StandardCharsets;
+import java.nio.ByteBuffer;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Lehtto
  * @since 0.1.0
  */
-public record Question(@NotNull String name, @NotNull Type type, @NotNull DnsClass recordClass)
+public record Question(@NotNull DomainName name, @NotNull Type type, @NotNull DnsClass recordClass)
     implements Writable {
 
   /**
@@ -31,36 +30,17 @@ public record Question(@NotNull String name, @NotNull Type type, @NotNull DnsCla
    */
   @Override
   public byte @NotNull [] getBytes() {
-    final byte[] nameBytes = name.getBytes(StandardCharsets.UTF_8);
+    final byte[] nameBytes = name.toBytes();
     final byte[] typeBytes = type.getBytes();
     final byte[] recordClassBytes = recordClass.getBytes();
-    final byte[] bytes = new byte[Stream.of(nameBytes, typeBytes, recordClassBytes).mapToInt(v -> v.length).sum() + 1];
-    System.arraycopy(nameBytes, 0, bytes, 0, nameBytes.length);
-    bytes[nameBytes.length] = 0; // 0x00
-    System.arraycopy(typeBytes, 0, bytes, nameBytes.length + 1, typeBytes.length);
-    System.arraycopy(recordClassBytes, 0, bytes, nameBytes.length + typeBytes.length + 1, recordClassBytes.length);
-    return bytes;
+    final ByteBuffer byteBuffer = ByteBuffer.allocate(
+        Stream.of(nameBytes, typeBytes, recordClassBytes).mapToInt(v -> v.length).sum());
+    byteBuffer.put(nameBytes);
+    byteBuffer.put(typeBytes);
+    byteBuffer.put(recordClassBytes);
+    return byteBuffer.array();
   }
 
-  /**
-   * Checks if this question name is equal to the given name.
-   * <p/>
-   * Removes '.' and ' ' from both names before comparing.
-   * <p/>
-   * <b>Note:</b> this method is case-sensitive.
-   *
-   * @param name the name to compare to
-   * @return true if this question name is equal to the given name, false otherwise
-   */
-  public boolean nameMatch(final @NotNull String name) {
-    if (StringUtils.isEmpty(name)) {
-      return false;
-    }
-    final String transformedName = this.name.replace('.', (char) 0x3).trim();
-    final String transformedNameToCompare = name.replace('.', (char) 0x3).trim();
-
-    return transformedNameToCompare.equals(transformedName);
-  }
 
   /**
    * Builder for the question.
@@ -76,7 +56,7 @@ public record Question(@NotNull String name, @NotNull Type type, @NotNull DnsCla
    */
   public static final class Builder {
 
-    private @Nullable String name;
+    private @Nullable DomainName name;
     private @Nullable Type type;
     private @Nullable DnsClass recordClass;
 
@@ -106,7 +86,7 @@ public record Question(@NotNull String name, @NotNull Type type, @NotNull DnsCla
      * @param name the name
      * @return the builder
      */
-    public @NotNull Builder name(final @NotNull String name) {
+    public @NotNull Builder name(final @NotNull DomainName name) {
       this.name = name;
       return this;
     }

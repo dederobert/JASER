@@ -3,6 +3,7 @@ package fr.lehtto.jaser.dns.entity;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.StringJoiner;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -39,6 +40,20 @@ public final class DomainName {
   }
 
   /**
+   * Creates domain name from an array of labels.
+   *
+   * @param labels the labels
+   * @return the domain name
+   */
+  public static DomainName of(final String @NotNull [] labels) {
+    final StringJoiner joiner = new StringJoiner(".");
+    for (final String label : labels) {
+      joiner.add(label);
+    }
+    return new DomainName(labels, joiner.toString());
+  }
+
+  /**
    * Gets the value of this domain name as a byte array.
    *
    * @return the domain name as a byte array.
@@ -60,6 +75,15 @@ public final class DomainName {
    */
   public String value() {
     return value;
+  }
+
+  /**
+   * Gets the domain name as an array of labels.
+   *
+   * @return the domain name as an array of labels.
+   */
+  public String @NotNull [] labels() {
+    return labels;
   }
 
   @Override
