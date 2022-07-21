@@ -1,6 +1,7 @@
 package fr.lehtto.jaser.dns.console;
 
 import fr.lehtto.jaser.core.console.command.CommandHandler;
+import fr.lehtto.jaser.core.logging.Level;
 import fr.lehtto.jaser.core.utils.BeautifulListLogger;
 import fr.lehtto.jaser.dns.Dns;
 import fr.lehtto.jaser.dns.master.file.MasterFile;
