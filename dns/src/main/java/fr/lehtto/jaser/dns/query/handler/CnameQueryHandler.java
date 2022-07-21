@@ -6,10 +6,12 @@ import fr.lehtto.jaser.dns.entity.Header;
 import fr.lehtto.jaser.dns.entity.Query;
 import fr.lehtto.jaser.dns.entity.Question;
 import fr.lehtto.jaser.dns.entity.ResourceRecord;
+import fr.lehtto.jaser.dns.entity.ResourceRecord.Builder;
 import fr.lehtto.jaser.dns.entity.Response;
 import fr.lehtto.jaser.dns.entity.enumration.QR;
 import fr.lehtto.jaser.dns.entity.enumration.RCode;
-import fr.lehtto.jaser.dns.master.file.MasterFileQuerier;
+import fr.lehtto.jaser.dns.entity.enumration.Type;
+import fr.lehtto.jaser.dns.master.file.Zone;
 import fr.lehtto.jaser.dns.metrics.MetricsService;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -34,36 +36,39 @@ final class CnameQueryHandler implements QueryHandler {
 
   @Override
   public @NotNull Response handleValidatedQuery(final @NotNull Query query) {
-    Dns.INSTANCE.getMetricsService().map(MetricsService::getMetrics)
+    Dns.INSTANCE.getMetricsService()
+        .map(MetricsService::getMetrics)
         .ifPresent(metrics -> metrics.incrementCnameQuery(1));
     // Current implementation only supports one question
     final Question question = query.questions().get(0);
 
-    final List<ResourceRecord> answers = new MasterFileQuerier(Dns.INSTANCE.getMasterFiles())
-        .withClass(question.recordClass())
-        .withType(question.type())
-        .withDomain(question.name())
-        .getRecordsStream()
-        .map(resourceRecord -> ResourceRecord.builder()
-            .pointer(question)
-            .type(resourceRecord.type())
-            .recordClass(resourceRecord.recordClass())
-            .ttl(resourceRecord.ttl())
-            .data(resourceRecord.data())
-            .build())
-        .toList();
+    final List<ResourceRecord> answers =
+        Dns.INSTANCE.getMasterFile()
+            .search(question)
+            .stream()
+            .map(Zone::getRecords)
+            .flatMap(List::stream)
+            .filter(resourceRecord -> Type.CNAME == resourceRecord.type())
+            .map(ResourceRecord::toBuilder)
+            .map(builder -> builder.pointer(question))
+            .map(Builder::build)
+            .toList();
 
     // Create response header's flags
-    final Flags flags = query.header().flags().toBuilder().qr(QR.RESPONSE)
-        .rcode(RCode.NO_ERROR)
-        .build();
+    final Flags flags = query.header()
+                            .flags()
+                            .toBuilder()
+                            .qr(QR.RESPONSE)
+                            .rcode(RCode.NO_ERROR)
+                            .build();
 
     // Create response's header
-    final Header header = query.header().toBuilder()
-        // Set the answer count to 1
-        .ancount((short) answers.size())
-        .flags(flags)
-        .build();
+    final Header header = query.header()
+                              .toBuilder()
+                              // Set the answer count to 1
+                              .ancount((short)answers.size())
+                              .flags(flags)
+                              .build();
 
     // Create response
     return Response.builder()

@@ -254,7 +254,6 @@ public final class ResourceRecord implements Writable {
   /**
    * Builder for the {@link ResourceRecord resource record} entity.
    */
-  @SuppressWarnings("VariableNotUsedInsideIf")
   public static class Builder {
 
     private boolean useCompression;
@@ -306,10 +305,6 @@ public final class ResourceRecord implements Writable {
      * @return the builder
      */
     public Builder pointer(final Object pointer) {
-      if (null != name) {
-        throw new IllegalStateException(
-            "Cannot set pointer and name at the same time.");
-      }
       this.useCompression = true;
       this.pointer = pointer;
       return this;
@@ -322,10 +317,6 @@ public final class ResourceRecord implements Writable {
      * @return the builder.
      */
     public Builder name(final @NotNull DomainName name) {
-      if (null != pointer) {
-        throw new IllegalArgumentException(
-            "Cannot set name and pointer at the same time.");
-      }
       this.useCompression = false;
       this.name = name;
       return this;

@@ -1,5 +1,6 @@
 package fr.lehtto.jaser.dns;
 
+import com.jcabi.aspects.Loggable;
 import fr.lehtto.jaser.core.UdpServer;
 import fr.lehtto.jaser.dns.entity.parser.InvalidDnsZoneEntryException;
 import fr.lehtto.jaser.dns.master.file.MasterFile;
@@ -8,8 +9,6 @@ import fr.lehtto.jaser.dns.metrics.MetricsService;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +28,7 @@ public final class Dns implements AutoCloseable {
   public static final Dns INSTANCE = new Dns();
 
   private static final Logger LOG = LoggerFactory.getLogger(Dns.class);
-  private final List<MasterFile> masterFiles = new ArrayList<>();
+  private MasterFile masterFile;
   private Thread serverThread;
   private UdpServer<DnsClientHandler> server;
   private @Nullable MetricsService metricsService;
@@ -37,7 +36,7 @@ public final class Dns implements AutoCloseable {
   /**
    * Valued constructor.
    */
-  private Dns() {}
+  private Dns() { masterFile = new MasterFile(); }
 
   /**
    * Starts the DNS server.
@@ -56,22 +55,21 @@ public final class Dns implements AutoCloseable {
    *
    * @return the master file
    */
-  public List<MasterFile> getMasterFiles() { return masterFiles; }
+  public MasterFile getMasterFile() { return masterFile; }
 
   /**
    * Loads the DNS zone from a file.
    *
    * @param file the master file to load
    */
+  @Loggable
   void load(final @NotNull File file) {
-    LOG.info("Loading dns zone from {}", file);
     try {
-      final MasterFile masterFile = MasterFileParser.parse(file);
-      LOG.info("Loaded {} records", masterFile.size());
-      masterFiles.add(masterFile);
+      final int count = MasterFileParser.parse(masterFile, file);
+      LOG.info("Loaded {} records", count);
       getMetricsService()
           .map(MetricsService::getMetrics)
-          .ifPresent(metrics -> metrics.incrementZoneSize(masterFile.size()));
+          .ifPresent(metrics -> metrics.incrementZoneSize(count));
     } catch (final InvalidDnsZoneEntryException e) {
       LOG.error("Invalid DNS zone entry: {}", e.getMessage());
     }
@@ -93,11 +91,11 @@ public final class Dns implements AutoCloseable {
   /**
    * Sets master files.
    *
-   * @param masterFiles the master files to set
+   * @param masterFile the master files to set
    */
   @VisibleForTesting
-  void initializeMasterFiles(final List<MasterFile> masterFiles) {
-    this.masterFiles.addAll(masterFiles);
+  void initializeMasterFiles(final MasterFile masterFile) {
+    this.masterFile = masterFile;
   }
 
   /**
