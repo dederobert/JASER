@@ -7,7 +7,7 @@
 
   <groupId>fr.lehtto</groupId>
   <artifactId>jaser-bom</artifactId>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>JASER BOM (Bill Of Material)</name>
@@ -46,6 +46,12 @@
         <artifactId>log4j-core</artifactId>
         <version>2.17.2</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j-impl</artifactId>
+        <version>2.18.0</version>
+      </dependency>
+
       <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>

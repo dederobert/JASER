@@ -6,10 +6,10 @@ import fr.lehtto.jaser.dns.entity.rdata.Rdata;
 import java.nio.ByteBuffer;
 import java.util.Objects;
 import java.util.stream.Stream;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DNS resource record (RFC 1035 section 4.1.3).
@@ -21,11 +21,12 @@ import org.jetbrains.annotations.Range;
 @SuppressWarnings("NumericCastThatLosesPrecision")
 public final class ResourceRecord implements Writable {
 
-  private static final Logger LOG = LogManager.getLogger(ResourceRecord.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(ResourceRecord.class);
 
   private static final int TTL_LENGTH = 4;
   private static final int LENGTH_RDATA_LENGTH = 2;
-  private static final short POINTER_MASK = (short) 0xc000;
+  private static final short POINTER_MASK = (short)0xc000;
   private final boolean useCompression;
   private final Object pointer;
   private final @NotNull DomainName name;
@@ -44,13 +45,11 @@ public final class ResourceRecord implements Writable {
    * @param ttl         the time to live of the resource record
    * @param data        the data of the resource record
    */
-  public ResourceRecord(
-      final @NotNull DomainName name,
-      final @NotNull Type type,
-      final @NotNull DnsClass recordClass,
-      final @Range(from = 0, to = Integer.MAX_VALUE) int ttl,
-      final @NotNull Rdata data
-  ) {
+  public ResourceRecord(final @NotNull DomainName name,
+                        final @NotNull Type type,
+                        final @NotNull DnsClass recordClass,
+                        final @Range(from = 0, to = Integer.MAX_VALUE) int ttl,
+                        final @NotNull Rdata data) {
     this.useCompression = false;
     this.pointer = null;
     this.name = name;
@@ -69,13 +68,10 @@ public final class ResourceRecord implements Writable {
    * @param ttl         the time to live of the resource record
    * @param data        the data of the resource record
    */
-  public ResourceRecord(
-      final Object pointer,
-      final @NotNull Type type,
-      final @NotNull DnsClass recordClass,
-      final @Range(from = 0, to = Integer.MAX_VALUE) int ttl,
-      final @NotNull Rdata data
-  ) {
+  public ResourceRecord(final Object pointer, final @NotNull Type type,
+                        final @NotNull DnsClass recordClass,
+                        final @Range(from = 0, to = Integer.MAX_VALUE) int ttl,
+                        final @NotNull Rdata data) {
     this.useCompression = true;
     this.pointer = pointer;
     this.name = DomainName.of("");
@@ -90,24 +86,20 @@ public final class ResourceRecord implements Writable {
    *
    * @return the builder
    */
-  public static Builder builder() {
-    return new Builder();
-  }
+  public static Builder builder() { return new Builder(); }
 
   /**
    * Creates a new builder for the resource record.
    *
    * @return the new builder
    */
-  public Builder toBuilder() {
-    return new Builder(this);
-  }
+  public Builder toBuilder() { return new Builder(this); }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public byte @NotNull [] getBytes() {
+  public byte @NotNull[] getBytes() {
 
     final byte[] nameBytes = name.toBytes();
     final byte[] typeBytes = type.getBytes();
@@ -115,24 +107,26 @@ public final class ResourceRecord implements Writable {
     final byte[] dataBytes = data.getBytes();
 
     // Size of the buffer is the sum of the sizes of the fields.
-    final int bufferSize = Stream.of(typeBytes, recordClassBytes, dataBytes).mapToInt(v -> v.length).sum()
-        + TTL_LENGTH
-        + LENGTH_RDATA_LENGTH
-        + (useCompression ? 2 : nameBytes.length);
+    final int bufferSize = Stream.of(typeBytes, recordClassBytes, dataBytes)
+                               .mapToInt(v -> v.length)
+                               .sum() +
+                           TTL_LENGTH + LENGTH_RDATA_LENGTH +
+                           (useCompression ? 2 : nameBytes.length);
 
     final ByteBuffer byteBuffer = ByteBuffer.allocate(bufferSize);
     if (useCompression) {
       if (-1 == pointerShort) {
-        throw new IllegalStateException("The pointer has not been resolved yet.");
+        throw new IllegalStateException(
+            "The pointer has not been resolved yet.");
       }
-      byteBuffer.putShort((short) (pointerShort | POINTER_MASK));
+      byteBuffer.putShort((short)(pointerShort | POINTER_MASK));
     } else {
       byteBuffer.put(nameBytes);
     }
     byteBuffer.put(typeBytes);
     byteBuffer.put(recordClassBytes);
     byteBuffer.putInt(ttl);
-    byteBuffer.putShort((short) dataBytes.length);
+    byteBuffer.putShort((short)dataBytes.length);
     byteBuffer.put(dataBytes);
 
     return byteBuffer.array();
@@ -192,45 +186,35 @@ public final class ResourceRecord implements Writable {
    *
    * @return the name of the resource record
    */
-  public @NotNull DomainName name() {
-    return name;
-  }
+  public @NotNull DomainName name() { return name; }
 
   /**
    * Gets the type of the resource record.
    *
    * @return the type of the resource record
    */
-  public @NotNull Type type() {
-    return type;
-  }
+  public @NotNull Type type() { return type; }
 
   /**
    * Gets the class of the resource record.
    *
    * @return the class of the resource record
    */
-  public @NotNull DnsClass recordClass() {
-    return recordClass;
-  }
+  public @NotNull DnsClass recordClass() { return recordClass; }
 
   /**
    * Gets the time to live of the resource record.
    *
    * @return the time to live of the resource record
    */
-  public @Range(from = 0, to = Integer.MAX_VALUE) int ttl() {
-    return ttl;
-  }
+  public @Range(from = 0, to = Integer.MAX_VALUE) int ttl() { return ttl; }
 
   /**
    * Gets the data of the resource record.
    *
    * @return the data of the resource record
    */
-  public @NotNull Rdata data() {
-    return data;
-  }
+  public @NotNull Rdata data() { return data; }
 
   @Override
   public boolean equals(final Object obj) {
@@ -240,34 +224,32 @@ public final class ResourceRecord implements Writable {
     if (null == obj || obj.getClass() != this.getClass()) {
       return false;
     }
-    final var that = (ResourceRecord) obj;
+    final var that = (ResourceRecord)obj;
     return this.useCompression == that.useCompression &&
         Objects.equals(this.pointer, that.pointer) &&
-        Objects.equals(this.name, that.name) &&
-        this.type == that.type &&
-        this.recordClass == that.recordClass &&
-        this.ttl == that.ttl &&
+        Objects.equals(this.name, that.name) && this.type == that.type &&
+        this.recordClass == that.recordClass && this.ttl == that.ttl &&
         Objects.equals(this.data, that.data);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(useCompression, pointer, name, type, recordClass, ttl, data);
+    return Objects.hash(useCompression, pointer, name, type, recordClass, ttl,
+                        data);
   }
 
   @Override
   public String toString() {
-    return "ResourceRecord[" +
-        "useCompression=" + useCompression + ", " +
-        "pointer=" + pointer + ", " +
-        "name=" + name + ", " +
-        "type=" + type + ", " +
-        "recordClass=" + recordClass + ", " +
-        "ttl=" + ttl + ", " +
-        "data=" + data + ", " +
-        "pointerShort=" + pointerShort + ']';
+    return "ResourceRecord["
+        + "useCompression=" + useCompression + ", "
+        + "pointer=" + pointer + ", "
+        + "name=" + name + ", "
+        + "type=" + type + ", "
+        + "recordClass=" + recordClass + ", "
+        + "ttl=" + ttl + ", "
+        + "data=" + data + ", "
+        + "pointerShort=" + pointerShort + ']';
   }
-
 
   /**
    * Builder for the {@link ResourceRecord resource record} entity.
@@ -325,7 +307,8 @@ public final class ResourceRecord implements Writable {
      */
     public Builder pointer(final Object pointer) {
       if (null != name) {
-        throw new IllegalStateException("Cannot set pointer and name at the same time.");
+        throw new IllegalStateException(
+            "Cannot set pointer and name at the same time.");
       }
       this.useCompression = true;
       this.pointer = pointer;
@@ -340,7 +323,8 @@ public final class ResourceRecord implements Writable {
      */
     public Builder name(final @NotNull DomainName name) {
       if (null != pointer) {
-        throw new IllegalArgumentException("Cannot set name and pointer at the same time.");
+        throw new IllegalArgumentException(
+            "Cannot set name and pointer at the same time.");
       }
       this.useCompression = false;
       this.name = name;
@@ -398,11 +382,13 @@ public final class ResourceRecord implements Writable {
      */
     public ResourceRecord build() {
       if (null == pointer && useCompression) {
-        throw new IllegalStateException("Pointer is not set while compression is enabled");
+        throw new IllegalStateException(
+            "Pointer is not set while compression is enabled");
       }
       if (null == name) {
         if (!useCompression) {
-          throw new IllegalArgumentException("name is not set while compression is disabled");
+          throw new IllegalArgumentException(
+              "name is not set while compression is disabled");
         }
         // HACK to avoid null pointer exception.
         name = DomainName.of("");

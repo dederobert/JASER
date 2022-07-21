@@ -6,10 +6,10 @@ import fr.lehtto.jaser.dns.entity.Query;
 import fr.lehtto.jaser.dns.entity.Response;
 import fr.lehtto.jaser.dns.entity.enumration.QR;
 import fr.lehtto.jaser.dns.entity.enumration.RCode;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DNS query handler.
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface QueryHandler {
 
-  Logger LOG = LogManager.getLogger(QueryHandler.class);
+  Logger LOG = LoggerFactory.getLogger(QueryHandler.class);
 
   /**
    * Handles the given query.
@@ -34,7 +34,8 @@ public interface QueryHandler {
    */
   default Response handle(final @NotNull Query query) {
     // Validate the query
-    final QueryValidationResult validationResult = QueryValidator.validate(query);
+    final QueryValidationResult validationResult =
+        QueryValidator.validate(query);
 
     if (!validationResult.valid()) {
       if (LOG.isInfoEnabled()) {
@@ -42,11 +43,15 @@ public interface QueryHandler {
       }
       // Invalid query => return error response with RCODE=FORMAT_ERROR
       return Response.builder()
-          .header(query.header().toBuilder()
-              .flags(query.header().flags().toBuilder().qr(QR.RESPONSE)
-                  .rcode(RCode.FORMAT_ERROR)
-                  .build())
-              .build())
+          .header(query.header()
+                      .toBuilder()
+                      .flags(query.header()
+                                 .flags()
+                                 .toBuilder()
+                                 .qr(QR.RESPONSE)
+                                 .rcode(RCode.FORMAT_ERROR)
+                                 .build())
+                      .build())
           .questions(query.questions())
           .noAnswer()
           .noAuthorityRecords()
@@ -59,11 +64,15 @@ public interface QueryHandler {
       LOG.info("Query has more than one question");
       // Invalid query => return error response with RCODE=NOT_IMPLEMENTED
       return Response.builder()
-          .header(query.header().toBuilder()
-              .flags(query.header().flags().toBuilder().qr(QR.RESPONSE)
-                  .rcode(RCode.NOT_IMPLEMENTED)
-                  .build())
-              .build())
+          .header(query.header()
+                      .toBuilder()
+                      .flags(query.header()
+                                 .flags()
+                                 .toBuilder()
+                                 .qr(QR.RESPONSE)
+                                 .rcode(RCode.NOT_IMPLEMENTED)
+                                 .build())
+                      .build())
           .questions(query.questions())
           .noAnswer()
           .noAuthorityRecords()
@@ -81,6 +90,6 @@ public interface QueryHandler {
    * @return the response to the query
    */
   @OverrideOnly
-  @NotNull Response handleValidatedQuery(final @NotNull Query query);
-
+  @NotNull
+  Response handleValidatedQuery(final @NotNull Query query);
 }

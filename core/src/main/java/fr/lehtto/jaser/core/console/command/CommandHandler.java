@@ -1,10 +1,10 @@
 package fr.lehtto.jaser.core.console.command;
 
 import fr.lehtto.jaser.core.utils.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Command handler.
@@ -14,7 +14,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class CommandHandler {
 
-  private static final Logger LOG = LogManager.getLogger(CommandHandler.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(CommandHandler.class);
 
   private @Nullable CommandHandler next;
 
@@ -61,17 +62,12 @@ public abstract class CommandHandler {
    *
    * @return the next command handler
    */
-  public @Nullable CommandHandler getNext() {
-    return next;
-  }
+  public @Nullable CommandHandler getNext() { return next; }
 
   /**
    * Sets the next command handler.
    *
    * @param next the next command handler
    */
-  public void setNext(final @Nullable CommandHandler next) {
-    this.next = next;
-  }
-
+  public void setNext(final @Nullable CommandHandler next) { this.next = next; }
 }

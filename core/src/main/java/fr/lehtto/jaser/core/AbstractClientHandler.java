@@ -4,11 +4,11 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.UUID;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract client handler.
@@ -18,7 +18,8 @@ import org.jetbrains.annotations.Nullable;
  */
 abstract class AbstractClientHandler implements Closeable, Runnable {
 
-  private static final Logger LOG = LogManager.getLogger(AbstractClientHandler.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(AbstractClientHandler.class);
 
   private final @NotNull UUID uuid;
   private WeakReference<Thread> thread;
@@ -27,9 +28,7 @@ abstract class AbstractClientHandler implements Closeable, Runnable {
   /**
    * Default constructor.
    */
-  AbstractClientHandler() {
-    this.uuid = UUID.randomUUID();
-  }
+  AbstractClientHandler() { this.uuid = UUID.randomUUID(); }
 
   /**
    * Closes the client handler.
@@ -48,24 +47,22 @@ abstract class AbstractClientHandler implements Closeable, Runnable {
    *
    * @throws IOException if an error occurs
    */
-  @OverrideOnly
-  protected abstract void stop() throws IOException;
+  @OverrideOnly protected abstract void stop() throws IOException;
 
   /**
    * Gets the running state.
    *
    * @return the running state
    */
-  protected boolean isRunning() {
-    return running;
-  }
+  protected boolean isRunning() { return running; }
 
   /**
    * Gets the client ID.
    *
    * @return the client ID
    */
-  @NotNull UUID getUuid() {
+  @NotNull
+  UUID getUuid() {
     return uuid;
   }
 
@@ -74,7 +71,8 @@ abstract class AbstractClientHandler implements Closeable, Runnable {
    *
    * @return the client handler thread
    */
-  @Nullable Thread getThread() {
+  @Nullable
+  Thread getThread() {
     return thread.get();
   }
 
