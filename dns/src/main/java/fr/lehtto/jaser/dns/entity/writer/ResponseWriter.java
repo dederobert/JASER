@@ -17,7 +17,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class ResponseWriter {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ResponseWriter.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(ResponseWriter.class);
 
   /**
    * Default constructor.
@@ -34,7 +35,8 @@ public final class ResponseWriter {
    * @return the number of bytes written
    */
   @Contract(mutates = "param2")
-  public static int write(final @NotNull Response response, final byte @NotNull [] buffer) {
+  public static int write(final @NotNull Response response,
+                          final byte @NotNull[] buffer) {
     LOG.debug("Write response");
 
     response.resolvePointers();
@@ -63,5 +65,4 @@ public final class ResponseWriter {
     }
     return i;
   }
-
 }

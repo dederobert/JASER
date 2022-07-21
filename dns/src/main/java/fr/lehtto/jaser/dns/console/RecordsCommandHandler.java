@@ -20,7 +20,8 @@ import org.slf4j.LoggerFactory;
  */
 public class RecordsCommandHandler extends CommandHandler {
 
-  private static final Logger LOG = LoggerFactory.getLogger(RecordsCommandHandler.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(RecordsCommandHandler.class);
 
   /**
    * Valued constructor.
@@ -38,7 +39,11 @@ public class RecordsCommandHandler extends CommandHandler {
     }
 
     BeautifulListLogger.log(LOG, Level.INFO, "Resource records",
-        Dns.INSTANCE.getMasterFiles().stream().map(MasterFile::getRecords).flatMap(Collection::stream).toList());
+                            Dns.INSTANCE.getMasterFiles()
+                                .stream()
+                                .map(MasterFile::getRecords)
+                                .flatMap(Collection::stream)
+                                .toList());
     return true;
   }
 }

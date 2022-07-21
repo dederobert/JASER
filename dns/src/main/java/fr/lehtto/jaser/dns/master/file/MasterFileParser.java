@@ -24,7 +24,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class MasterFileParser {
 
-  private static final Logger LOG = LoggerFactory.getLogger(MasterFileParser.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(MasterFileParser.class);
 
   /**
    * Default constructor.
@@ -40,11 +41,13 @@ public final class MasterFileParser {
    * @return the parsed master file
    * @throws InvalidDnsZoneEntryException if the master file is invalid
    */
-  public static @NotNull MasterFile parse(final File masterFile) throws InvalidDnsZoneEntryException {
+  public static @NotNull MasterFile parse(final File masterFile)
+      throws InvalidDnsZoneEntryException {
     // Determine the zone name from the file name.
     final String domain;
     if (masterFile.getName().endsWith(".zone")) {
-      domain = masterFile.getName().substring(0, masterFile.getName().length() - 4);
+      domain =
+          masterFile.getName().substring(0, masterFile.getName().length() - 4);
     } else {
       LOG.warn("Please consider using a .zone file.");
       domain = masterFile.getName() + '.';
@@ -56,7 +59,8 @@ public final class MasterFileParser {
     final MasterFile master = new MasterFile();
 
     // Parse the file.
-    final ParserInputContext parserInputContext = new ParserInputContext(lines, domain);
+    final ParserInputContext parserInputContext =
+        new ParserInputContext(lines, domain);
     // TODO remove this part.
     while (parserInputContext.hasNextLine()) {
       final String line = parserInputContext.nextLine();
@@ -81,19 +85,21 @@ public final class MasterFileParser {
       }
 
       // This is a resource record line.
-      final String recordDomain = retrieveDomain(parserInputContext, parsedTokens);
+      final String recordDomain =
+          retrieveDomain(parserInputContext, parsedTokens);
       final Type type = retrieveType(parsedTokens);
       final int ttl = retrieveTtl(parserInputContext, parsedTokens);
       final DnsClass dnsClass = retrieveClass(parserInputContext, parsedTokens);
       final String[] data = retrieveData(parsedTokens);
 
-      final ResourceRecord resourceRecord = ResourceRecord.builder()
-          .name(DomainName.of(recordDomain))
-          .type(type)
-          .ttl(ttl)
-          .recordClass(dnsClass)
-          .data(RDataFactory.create(type, data))
-          .build();
+      final ResourceRecord resourceRecord =
+          ResourceRecord.builder()
+              .name(DomainName.of(recordDomain))
+              .type(type)
+              .ttl(ttl)
+              .recordClass(dnsClass)
+              .data(RDataFactory.create(type, data))
+              .build();
 
       master.addRecord(resourceRecord);
     }
@@ -108,8 +114,10 @@ public final class MasterFileParser {
    * @param parserInputContext the parser input context
    * @throws InvalidDnsZoneEntryException if the master file is invalid
    */
-  private static void handleControlLine(final @NotNull File masterFile,
-      final @NotNull List<ParsedToken> parsedTokens, final @NotNull ParserInputContext parserInputContext)
+  private static void
+  handleControlLine(final @NotNull File masterFile,
+                    final @NotNull List<ParsedToken> parsedTokens,
+                    final @NotNull ParserInputContext parserInputContext)
       throws InvalidDnsZoneEntryException {
     LOG.debug("Control line: {}", parsedTokens);
     switch (parsedTokens.get(0).value()) {
@@ -217,39 +225,43 @@ public final class MasterFileParser {
         .findFirst()
         .map(Integer::parseInt)
         .orElseGet(parserInputContext::getTtl);
-    assert null != ttl : "TTL should not be null.";
-    return ttl;
-  }
+    assert null != ttl :
+        "TTL should not be null.";
+        return ttl;
+      }
 
-  /**
-   * Retrieves the DNS class from the parsed tokens or stated DNS class.
-   *
-   * @param parserInputContext the parser input context
-   * @param parsedTokens       the parsed tokens
-   * @return the DNS class
-   */
-  private static @NotNull DnsClass retrieveClass(final @NotNull ParserInputContext parserInputContext,
-      final @NotNull List<ParsedToken> parsedTokens) {
-    final DnsClass dnsClass = parsedTokens.stream()
-        .filter(token -> ParseTokenStateMachine.CLASS == token.type())
-        .map(ParsedToken::value)
-        .findFirst()
-        .map(DnsClass::valueOf)
-        .orElseGet(parserInputContext::getDnsClass);
-    assert null != dnsClass : "DnsClass should not be null.";
-    return dnsClass;
-  }
+      /**
+       * Retrieves the DNS class from the parsed tokens or stated DNS class.
+       *
+       * @param parserInputContext the parser input context
+       * @param parsedTokens       the parsed tokens
+       * @return the DNS class
+       */
+      private static @NotNull DnsClass retrieveClass(
+          final @NotNull ParserInputContext parserInputContext,
+          final @NotNull List<ParsedToken> parsedTokens) {
+        final DnsClass dnsClass =
+            parsedTokens.stream()
+                .filter(token -> ParseTokenStateMachine.CLASS == token.type())
+                .map(ParsedToken::value)
+                .findFirst()
+                .map(DnsClass::valueOf)
+                .orElseGet(parserInputContext::getDnsClass);
+        assert null != dnsClass : "DnsClass should not be null.";
+        return dnsClass;
+      }
 
-  /**
-   * Retrieves the data from the parsed tokens.
-   *
-   * @param parsedTokens the parsed tokens
-   * @return the data
-   */
-  private static String @NotNull [] retrieveData(final @NotNull List<ParsedToken> parsedTokens) {
-    return parsedTokens.stream()
-        .filter(token -> ParseTokenStateMachine.DATA == token.type())
-        .map(ParsedToken::value)
-        .toArray(String[]::new);
+      /**
+       * Retrieves the data from the parsed tokens.
+       *
+       * @param parsedTokens the parsed tokens
+       * @return the data
+       */
+      private static String @NotNull[] retrieveData(
+          final @NotNull List<ParsedToken> parsedTokens) {
+        return parsedTokens.stream()
+            .filter(token -> ParseTokenStateMachine.DATA == token.type())
+            .map(ParsedToken::value)
+            .toArray(String[] ::new);
+      }
   }
-}

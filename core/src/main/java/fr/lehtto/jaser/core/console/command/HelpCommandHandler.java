@@ -15,7 +15,8 @@ import org.slf4j.LoggerFactory;
  */
 public class HelpCommandHandler extends CommandHandler {
 
-  private static final Logger LOG = LoggerFactory.getLogger(HelpCommandHandler.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(HelpCommandHandler.class);
   private final List<String> helpLines = new ArrayList<>();
 
   /**

@@ -37,8 +37,7 @@ public final class Dns implements AutoCloseable {
   /**
    * Valued constructor.
    */
-  private Dns() {
-  }
+  private Dns() {}
 
   /**
    * Starts the DNS server.
@@ -57,9 +56,7 @@ public final class Dns implements AutoCloseable {
    *
    * @return the master file
    */
-  public List<MasterFile> getMasterFiles() {
-    return masterFiles;
-  }
+  public List<MasterFile> getMasterFiles() { return masterFiles; }
 
   /**
    * Loads the DNS zone from a file.
@@ -72,7 +69,8 @@ public final class Dns implements AutoCloseable {
       final MasterFile masterFile = MasterFileParser.parse(file);
       LOG.info("Loaded {} records", masterFile.size());
       masterFiles.add(masterFile);
-      getMetricsService().map(MetricsService::getMetrics)
+      getMetricsService()
+          .map(MetricsService::getMetrics)
           .ifPresent(metrics -> metrics.incrementZoneSize(masterFile.size()));
     } catch (final InvalidDnsZoneEntryException e) {
       LOG.error("Invalid DNS zone entry: {}", e.getMessage());
@@ -87,7 +85,8 @@ public final class Dns implements AutoCloseable {
     } catch (final InterruptedException e) {
       LOG.error("Error while waiting for server thread to terminate", e);
       serverThread.interrupt();
-      throw new IOException("Error while waiting for server thread to terminate", e);
+      throw new IOException(
+          "Error while waiting for server thread to terminate", e);
     }
   }
 

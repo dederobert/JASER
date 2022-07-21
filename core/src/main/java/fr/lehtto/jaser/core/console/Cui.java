@@ -30,7 +30,8 @@ public class Cui {
   public void start() {
     LOG.info("Entering console mode");
     LOG.info("Type 'h' or 'help' for help");
-    try (final Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8)) {
+    try (final Scanner scanner =
+             new Scanner(System.in, StandardCharsets.UTF_8)) {
       while (running) {
         final String line = scanner.nextLine();
         commandHandler.handle(line);
@@ -51,29 +52,36 @@ public class Cui {
    *
    * @param commandHandlerClass the command handler class
    */
-  public void addCommandHandler(final Class<? extends CommandHandler> commandHandlerClass) {
+  public void
+  addCommandHandler(final Class<? extends CommandHandler> commandHandlerClass) {
     try {
-      commandHandler = commandHandlerClass.getDeclaredConstructor(CommandHandler.class)
-          .newInstance(this.commandHandler);
+      commandHandler =
+          commandHandlerClass.getDeclaredConstructor(CommandHandler.class)
+              .newInstance(this.commandHandler);
     } catch (final InstantiationException e) {
-      LOG.error("Error while adding command handler. CommandHandler must not be abstract.", e);
+      LOG.error(
+          "Error while adding command handler. CommandHandler must not be abstract.",
+          e);
     } catch (final IllegalAccessException e) {
-      LOG.error("Error while adding command handler. CommandHandler must not be private.", e);
+      LOG.error(
+          "Error while adding command handler. CommandHandler must not be private.",
+          e);
     } catch (final InvocationTargetException e) {
-      LOG.error("Error while adding command handler. CommandHandler must not throw an exception.", e);
+      LOG.error(
+          "Error while adding command handler. CommandHandler must not throw an exception.",
+          e);
     } catch (final NoSuchMethodException e) {
       LOG.error(
           "Error while adding command handler. CommandHandler must have a constructor "
-              + "with a CommandHandler as parameter.", e);
+              + "with a CommandHandler as parameter.",
+          e);
     }
   }
 
   /**
    * Stops the console.
    */
-  public void stop() {
-    running = false;
-  }
+  public void stop() { running = false; }
 
   /**
    * Adds a help line.
