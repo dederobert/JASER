@@ -6,7 +6,6 @@ import fr.lehtto.jaser.core.utils.BeautifulListLogger;
 import fr.lehtto.jaser.dns.Dns;
 import fr.lehtto.jaser.dns.master.file.MasterFile;
 import java.util.Collection;
-import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
