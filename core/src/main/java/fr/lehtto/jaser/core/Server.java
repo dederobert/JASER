@@ -2,6 +2,7 @@ package fr.lehtto.jaser.core;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,9 +17,11 @@ import org.jetbrains.annotations.UnmodifiableView;
  *
  * @param <H> the handler class
  * @author Lehtto
+ * @version 0.2.0
  * @since 0.1.0
  */
-abstract class Server<H extends AbstractClientHandler> implements AutoCloseable, Runnable {
+abstract class Server<H extends AbstractClientHandler>
+    implements AutoCloseable, Runnable {
 
   private static final Logger LOG = LogManager.getLogger(Server.class);
 
@@ -36,7 +39,7 @@ abstract class Server<H extends AbstractClientHandler> implements AutoCloseable,
    * @param handlerClass the handler class
    */
   protected Server(final int port, @NotNull final InetAddress bindAddress,
-      @NotNull final Class<H> handlerClass) {
+                   @NotNull final Class<H> handlerClass) {
     this.port = port;
     this.bindAddress = bindAddress;
     this.handlerClass = handlerClass;
@@ -68,33 +71,110 @@ abstract class Server<H extends AbstractClientHandler> implements AutoCloseable,
    *
    * @throws IOException if an error occurs
    */
-  @OverrideOnly
-  protected abstract void stop() throws IOException;
+  @OverrideOnly protected abstract void stop() throws IOException;
 
   /**
-   * Adds a client handler.
-   *
-   * @param clientHandler the client handler
+   * Starts the server and waits for connections.
    */
-  void addClientHandler(@NotNull final H clientHandler) {
-    clientHandlers.add(new WeakReference<>(clientHandler));
+  @Override
+  public final void run() {
+    try {
+      LOG.info("Starting server on {}:{}", getBindAddress(), getPort());
+      startServer();
+      LOG.info("TcpServer started on {}:{}", getBindAddress(), getPort());
+      LOG.debug("Waiting for connections...");
+      while (isRunning()) {
+        final H clientHandler = acceptConnection();
+        LOG.debug("New client connected");
+        addClientHandler(clientHandler);
+        final Thread thread =
+            new Thread(clientHandler,
+                       "ClientHandler-" +
+                           clientHandler.getUuid().getMostSignificantBits());
+        clientHandler.setThread(thread);
+        thread.start();
+      }
+    } catch (final IOException e) {
+      if (isRunning()) {
+        LOG.error("Error while accepting client connection", e);
+      }
+    } catch (final InvocationTargetException e) {
+      LOG.error(
+          "Error while creating client handler, check your handler class. "
+              + "Handler constructor throws an exception",
+          e);
+    } catch (final InstantiationException e) {
+      LOG.error(
+          "Error while creating client handler, could not instantiate class. "
+              + "Hint: handler class must not be abstract",
+          e);
+    } catch (final IllegalAccessException e) {
+      LOG.error("Error while creating client handler, illegal access", e);
+    } catch (final NoSuchMethodException e) {
+      LOG.error(
+          "Error while creating client handler, no constructor found. "
+              +
+              "Hint: handler class must have a public constructor with a single Socket parameter",
+          e);
+    }
+
+    // Wait for all client handlers to finish
+    LOG.debug("Waiting for client handlers to finish");
+    for (final WeakReference<H> reference : getClientHandlers()) {
+      final H clientHandler = reference.get();
+      if (null != clientHandler) {
+        final Thread thread = clientHandler.getThread();
+        if (null != thread) {
+          LOG.debug("Waiting for client handler {} to finish", reference);
+          try {
+            thread.join();
+          } catch (final InterruptedException e) {
+            LOG.error("Error while waiting for client handler to finish", e);
+            thread.interrupt();
+          }
+        } else {
+          LOG.warn("Client handler {} has no thread", clientHandler);
+        }
+      }
+    }
+    LOG.debug("All client handlers finished");
   }
+
+  /**
+   * Starts the server.
+   *
+   * @throws IOException if an error occurs
+   */
+  protected abstract void startServer() throws IOException;
+
+  /**
+   * Accepts a connection.
+   *
+   * @return the client handler
+   * @throws IOException               if an error occurs
+   * @throws InvocationTargetException if an error occurs
+   * @throws InstantiationException    if an error occurs
+   * @throws IllegalAccessException    if an error occurs
+   * @throws NoSuchMethodException     if an error occurs
+   */
+  protected abstract H acceptConnection()
+      throws IOException, InvocationTargetException, InstantiationException,
+             IllegalAccessException, NoSuchMethodException;
 
   /**
    * Gets the port.
    *
    * @return the port
    */
-  int getPort() {
-    return port;
-  }
+  int getPort() { return port; }
 
   /**
    * Gets the bind address.
    *
    * @return the bind address
    */
-  @NotNull InetAddress getBindAddress() {
+  @NotNull
+  InetAddress getBindAddress() {
     return bindAddress;
   }
 
@@ -103,8 +183,18 @@ abstract class Server<H extends AbstractClientHandler> implements AutoCloseable,
    *
    * @return the handler class
    */
-  @NotNull Class<H> getHandlerClass() {
+  @NotNull
+  Class<H> getHandlerClass() {
     return handlerClass;
+  }
+
+  /**
+   * Adds a client handler.
+   *
+   * @param clientHandler the client handler
+   */
+  private void addClientHandler(@NotNull final H clientHandler) {
+    clientHandlers.add(new WeakReference<>(clientHandler));
   }
 
   /**
@@ -113,7 +203,8 @@ abstract class Server<H extends AbstractClientHandler> implements AutoCloseable,
    * @return the client handlers
    */
   @UnmodifiableView
-  @NotNull Set<WeakReference<H>> getClientHandlers() {
+  @NotNull
+  private Set<WeakReference<H>> getClientHandlers() {
     return Set.copyOf(clientHandlers);
   }
 
@@ -122,7 +213,5 @@ abstract class Server<H extends AbstractClientHandler> implements AutoCloseable,
    *
    * @return true, if it is running
    */
-  boolean isRunning() {
-    return running;
-  }
+  private boolean isRunning() { return running; }
 }
