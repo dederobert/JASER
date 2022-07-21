@@ -6,10 +6,10 @@ import fr.lehtto.jaser.dns.entity.Query;
 import fr.lehtto.jaser.dns.entity.Response;
 import fr.lehtto.jaser.dns.entity.enumration.QR;
 import fr.lehtto.jaser.dns.entity.enumration.RCode;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DNS query handler.
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface QueryHandler {
 
-  Logger LOG = LogManager.getLogger(QueryHandler.class);
+  Logger LOG = LoggerFactory.getLogger(QueryHandler.class);
 
   /**
    * Handles the given query.

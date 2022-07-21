@@ -6,9 +6,9 @@ import fr.lehtto.jaser.core.console.command.QuitCommandHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Console user interface.
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Cui {
 
-  private static final Logger LOG = LogManager.getLogger(Cui.class);
+  private static final Logger LOG = LoggerFactory.getLogger(Cui.class);
   private boolean running = true;
 
   private HelpCommandHandler helpCommandHandler;

@@ -6,9 +6,9 @@ import fr.lehtto.jaser.dns.metrics.MetricsService;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -24,7 +24,7 @@ import picocli.CommandLine.Parameters;
 @Command(name = "start", mixinStandardHelpOptions = true, description = "Starts the DNS server")
 public class StartCommand implements Runnable {
 
-  private static final Logger LOG = LogManager.getLogger(StartCommand.class);
+  private static final Logger LOG = LoggerFactory.getLogger(StartCommand.class);
   private @Nullable MetricsService metricsService;
 
   @SuppressWarnings("MismatchedReadAndWriteOfArray")

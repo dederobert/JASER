@@ -2,10 +2,10 @@ package fr.lehtto.jaser.core.console.command;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Command handler for the help command.
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class HelpCommandHandler extends CommandHandler {
 
-  private static final Logger LOG = LogManager.getLogger(HelpCommandHandler.class);
+  private static final Logger LOG = LoggerFactory.getLogger(HelpCommandHandler.class);
   private final List<String> helpLines = new ArrayList<>();
 
   /**

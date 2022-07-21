@@ -11,11 +11,11 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DNS main class.
@@ -28,7 +28,7 @@ public final class Dns implements AutoCloseable {
 
   public static final Dns INSTANCE = new Dns();
 
-  private static final Logger LOG = LogManager.getLogger(Dns.class);
+  private static final Logger LOG = LoggerFactory.getLogger(Dns.class);
   private final List<MasterFile> masterFiles = new ArrayList<>();
   private Thread serverThread;
   private UdpServer<DnsClientHandler> server;

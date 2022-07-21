@@ -6,10 +6,10 @@ import fr.lehtto.jaser.dns.entity.parser.HeaderParser;
 import fr.lehtto.jaser.dns.entity.parser.QuestionParser;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DNS query.
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public record Query(@NotNull Header header, @NotNull List<Question> questions) {
 
-  private static final Logger LOG = LogManager.getLogger(Query.class);
+  private static final Logger LOG = LoggerFactory.getLogger(Query.class);
 
 
   /**

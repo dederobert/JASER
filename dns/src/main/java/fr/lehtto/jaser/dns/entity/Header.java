@@ -1,9 +1,9 @@
 package fr.lehtto.jaser.dns.entity;
 
 import java.nio.ByteBuffer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DNS header.
@@ -27,7 +27,7 @@ public record Header(short id, @NotNull Flags flags, short qdcount, short ancoun
   public static final int ARCOUNT_LENGTH = 16; // 16 bits
   // endregion
 
-  private static final Logger LOG = LogManager.getLogger(Header.class);
+  private static final Logger LOG = LoggerFactory.getLogger(Header.class);
 
   /**
    * Creates a new builder.

@@ -6,10 +6,10 @@ import fr.lehtto.jaser.dns.entity.rdata.Rdata;
 import java.nio.ByteBuffer;
 import java.util.Objects;
 import java.util.stream.Stream;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DNS resource record (RFC 1035 section 4.1.3).
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Range;
 @SuppressWarnings("NumericCastThatLosesPrecision")
 public final class ResourceRecord implements Writable {
 
-  private static final Logger LOG = LogManager.getLogger(ResourceRecord.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ResourceRecord.class);
 
   private static final int TTL_LENGTH = 4;
   private static final int LENGTH_RDATA_LENGTH = 2;

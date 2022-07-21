@@ -1,15 +1,13 @@
 package fr.lehtto.jaser.dns.console;
 
 import fr.lehtto.jaser.core.console.command.CommandHandler;
+import fr.lehtto.jaser.core.logging.Level;
 import fr.lehtto.jaser.core.utils.BeautifulListLogger;
 import fr.lehtto.jaser.dns.Dns;
-import fr.lehtto.jaser.dns.master.file.MasterFile;
-import java.util.Collection;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Command handler for the records command.
@@ -20,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class RecordsCommandHandler extends CommandHandler {
 
-  private static final Logger LOG = LogManager.getLogger(RecordsCommandHandler.class);
+  private static final Logger LOG = LoggerFactory.getLogger(RecordsCommandHandler.class);
 
   /**
    * Valued constructor.
@@ -37,8 +35,7 @@ public class RecordsCommandHandler extends CommandHandler {
       return false;
     }
 
-    BeautifulListLogger.log(LOG, Level.INFO, "Resource records",
-        Dns.INSTANCE.getMasterFiles().stream().map(MasterFile::getRecords).flatMap(Collection::stream).toList());
+    BeautifulListLogger.log(LOG, Level.INFO, "Resource records", Dns.INSTANCE.getMasterFile().getRecords());
     return true;
   }
 }

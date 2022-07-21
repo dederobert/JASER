@@ -11,8 +11,8 @@ import io.prometheus.client.exporter.HTTPServer;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Service for metrics.
@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class MetricsService implements AutoCloseable {
 
-  private static final Logger LOG = LogManager.getLogger(MetricsService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(MetricsService.class);
   private final PrometheusMeterRegistry registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
   private final InetAddress address;
   private final int port;

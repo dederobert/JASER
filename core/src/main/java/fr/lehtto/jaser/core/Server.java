@@ -6,11 +6,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Server.
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 abstract class Server<H extends AbstractClientHandler>
     implements AutoCloseable, Runnable {
 
-  private static final Logger LOG = LogManager.getLogger(Server.class);
+  private static final Logger LOG = LoggerFactory.getLogger(Server.class);
 
   private final int port;
   private final @NotNull InetAddress bindAddress;

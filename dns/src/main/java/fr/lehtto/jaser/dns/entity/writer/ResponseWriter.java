@@ -3,10 +3,10 @@ package fr.lehtto.jaser.dns.entity.writer;
 import fr.lehtto.jaser.dns.entity.Question;
 import fr.lehtto.jaser.dns.entity.ResourceRecord;
 import fr.lehtto.jaser.dns.entity.Response;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Writes a DNS response to a buffer.
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ResponseWriter {
 
-  private static final Logger LOG = LogManager.getLogger(ResponseWriter.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ResponseWriter.class);
 
   /**
    * Default constructor.
