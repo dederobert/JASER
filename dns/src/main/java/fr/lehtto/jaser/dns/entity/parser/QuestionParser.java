@@ -33,7 +33,8 @@ public final class QuestionParser {
    * @param length the length of the bytes to parse
    * @return the parsed question
    */
-  public static @NotNull List<Question> parse(final byte @NotNull [] bytes, final int offset, final int length) {
+  public static @NotNull List<Question>
+  parse(final byte @NotNull[] bytes, final int offset, final int length) {
     int i = offset;
 
     final List<Question> questions = new ArrayList<>();
@@ -46,28 +47,34 @@ public final class QuestionParser {
       i += labelSize;
     }
 
-
     while (i < length) {
       final byte qTypeByte1 = bytes[i + 1];
       final byte qTypeByte2 = bytes[i + 2];
       final byte qClassByte1 = bytes[i + 3];
       final byte qClassByte2 = bytes[i + 4];
 
-      final short qTypeValue = (short) ((qTypeByte1 & 0xFFFF) << 8 | qTypeByte2 & 0x00FF);
-      final Type type = Type.fromTypeValue(qTypeValue)
-          .orElseThrow(() -> new IllegalArgumentException("Invalid type value: " + qTypeValue));
+      final short qTypeValue =
+          (short)((qTypeByte1 & 0xFFFF) << 8 | qTypeByte2 & 0x00FF);
+      final Type type =
+          Type.fromTypeValue(qTypeValue)
+              .orElseThrow(()
+                               -> new IllegalArgumentException(
+                                   "Invalid type value: " + qTypeValue));
 
-      final short qClassValue = (short) ((qClassByte1 & 0xFFFF) << 8 | qClassByte2 & 0x00FF);
-      final DnsClass dnsClass = DnsClass.fromValue(qClassValue)
-          .orElseThrow(() -> new IllegalArgumentException("Invalid class value: " + qClassValue));
+      final short qClassValue =
+          (short)((qClassByte1 & 0xFFFF) << 8 | qClassByte2 & 0x00FF);
+      final DnsClass dnsClass =
+          DnsClass.fromValue(qClassValue)
+              .orElseThrow(()
+                               -> new IllegalArgumentException(
+                                   "Invalid class value: " + qClassValue));
       questions.add(Question.builder()
-          .name(DomainName.of(labels.toArray(String[]::new)))
-          .type(type)
-          .recordClass(dnsClass)
-          .build());
+                        .name(DomainName.of(labels.toArray(String[] ::new)))
+                        .type(type)
+                        .recordClass(dnsClass)
+                        .build());
       i += 5;
     }
     return questions;
   }
-
 }

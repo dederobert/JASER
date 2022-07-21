@@ -13,43 +13,40 @@ import org.jetbrains.annotations.Nullable;
  * @author Lehtto
  * @since 0.1.0
  */
-public record Question(@NotNull DomainName name, @NotNull Type type, @NotNull DnsClass recordClass)
-    implements Writable {
+public record Question(@NotNull DomainName name, @NotNull Type type,
+                       @NotNull DnsClass recordClass) implements Writable {
 
   /**
    * Builder for the question.
    *
    * @return the builder
    */
-  public static @NotNull Builder builder() {
-    return new Builder();
-  }
+  public static @NotNull Builder builder() { return new Builder(); }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public byte @NotNull [] getBytes() {
+  public byte @NotNull[] getBytes() {
     final byte[] nameBytes = name.toBytes();
     final byte[] typeBytes = type.getBytes();
     final byte[] recordClassBytes = recordClass.getBytes();
-    final ByteBuffer byteBuffer = ByteBuffer.allocate(
-        Stream.of(nameBytes, typeBytes, recordClassBytes).mapToInt(v -> v.length).sum());
+    final ByteBuffer byteBuffer =
+        ByteBuffer.allocate(Stream.of(nameBytes, typeBytes, recordClassBytes)
+                                .mapToInt(v -> v.length)
+                                .sum());
     byteBuffer.put(nameBytes);
     byteBuffer.put(typeBytes);
     byteBuffer.put(recordClassBytes);
     return byteBuffer.array();
   }
 
-
   /**
    * Builder for the question.
    *
    * @return the builder
    */
-  public @NotNull Builder toBuilder() {
-    return new Builder(this);
-  }
+  public @NotNull Builder toBuilder() { return new Builder(this); }
 
   /**
    * Builder for the question.

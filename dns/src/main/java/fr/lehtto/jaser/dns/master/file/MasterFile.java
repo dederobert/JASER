@@ -27,13 +27,15 @@ public class MasterFile {
    * @param resourceRecord the resource record to add
    * @throws InvalidDnsZoneEntryException if the record is invalid
    */
-  public void addRecord(final @NotNull ResourceRecord resourceRecord) throws InvalidDnsZoneEntryException {
+  public void addRecord(final @NotNull ResourceRecord resourceRecord)
+      throws InvalidDnsZoneEntryException {
     // Check if the record is valid.
     if (null == dnsClass) {
       dnsClass = resourceRecord.recordClass();
     } else if (dnsClass != resourceRecord.recordClass()) {
       // The record class is not the same as the master file's class.
-      throw new InvalidDnsZoneEntryException("The record class is not the same as the master file's class.");
+      throw new InvalidDnsZoneEntryException(
+          "The record class is not the same as the master file's class.");
     }
 
     final String[] labels = resourceRecord.name().labels();
@@ -46,9 +48,7 @@ public class MasterFile {
    *
    * @return the zone's size
    */
-  public int size() {
-    return zones.stream().mapToInt(Zone::size).sum();
-  }
+  public int size() { return zones.stream().mapToInt(Zone::size).sum(); }
 
   /**
    * Gets the zone's records.
@@ -59,7 +59,10 @@ public class MasterFile {
   @UnmodifiableView
   @Deprecated(forRemoval = true)
   public @NotNull List<ResourceRecord> getRecords() {
-    return zones.stream().map(Zone::getRecordsFlatList).flatMap(List::stream).toList();
+    return zones.stream()
+        .map(Zone::getRecordsFlatList)
+        .flatMap(List::stream)
+        .toList();
   }
 
   /**
@@ -67,19 +70,20 @@ public class MasterFile {
    *
    * @return the zone's class
    */
-  public DnsClass getDnsClass() {
-    return dnsClass;
-  }
+  public DnsClass getDnsClass() { return dnsClass; }
 
   /**
    * Inserts a resource record in the master file.
    *
    * @param resourceRecord the resource record to insert
    * @param labels         the labels of the resource record
-   * @param labelPosition  the position of the label to insert the resource record in
+   * @param labelPosition  the position of the label to insert the resource
+   *     record in
    */
-  private void insertResourceRecord(final @NotNull ResourceRecord resourceRecord,
-      final String[] labels, final int labelPosition) {
+  private void insertResourceRecord(final
+                                    @NotNull ResourceRecord resourceRecord,
+                                    final String[] labels,
+                                    final int labelPosition) {
     final @NotNull List<Zone> children = this.zones;
 
     for (final Zone zone : children) {
@@ -107,10 +111,14 @@ public class MasterFile {
    * @param parent         the parent zone
    * @param resourceRecord the resource record to insert
    * @param labels         the labels of the resource record
-   * @param labelPosition  the position of the label to insert the resource record in
+   * @param labelPosition  the position of the label to insert the resource
+   *     record in
    */
-  private void insertResourceRecord(final @NotNull Zone parent, final @NotNull ResourceRecord resourceRecord,
-      final String[] labels, final int labelPosition) {
+  private void insertResourceRecord(final @NotNull Zone parent,
+                                    final
+                                    @NotNull ResourceRecord resourceRecord,
+                                    final String[] labels,
+                                    final int labelPosition) {
     final @NotNull List<Zone> children = parent.getSubZones();
 
     for (final Zone zone : children) {
@@ -143,7 +151,8 @@ public class MasterFile {
   public Optional<Zone> search(final @NotNull Question question) {
     final String[] labels = question.name().labels();
     for (final Zone zone : zones) {
-      final Optional<Zone> optionalZone = zone.search(labels, labels.length - 1);
+      final Optional<Zone> optionalZone =
+          zone.search(labels, labels.length - 1);
       if (optionalZone.isPresent()) {
         return optionalZone;
       }

@@ -36,7 +36,8 @@ public class RecordsCommandHandler extends CommandHandler {
       return false;
     }
 
-    BeautifulListLogger.log(LOG, Level.INFO, "Resource records", Dns.INSTANCE.getMasterFile().getRecords());
+    BeautifulListLogger.log(LOG, Level.INFO, "Resource records",
+                            Dns.INSTANCE.getMasterFile().getRecords());
     return true;
   }
 }

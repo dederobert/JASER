@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  * @since 0.2.0
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
-final class NSQueryHandler implements QueryHandler{
+final class NSQueryHandler implements QueryHandler {
 
   static final QueryHandler INSTANCE = new NSQueryHandler();
 
@@ -36,34 +36,41 @@ final class NSQueryHandler implements QueryHandler{
 
   @Override
   public @NotNull Response handleValidatedQuery(final @NotNull Query query) {
-    Dns.INSTANCE.getMetricsService().map(MetricsService::getMetrics).ifPresent(metrics -> metrics.incrementNsQuery(1));
+    Dns.INSTANCE.getMetricsService()
+        .map(MetricsService::getMetrics)
+        .ifPresent(metrics -> metrics.incrementNsQuery(1));
     // Current implementation only supports one question
     final Question question = query.questions().get(0);
 
-    final List<ResourceRecord> answers = Dns.INSTANCE.getMasterFile()
-        .search(question)
-        .stream()
-        .map(Zone::getRecords)
-        .flatMap(List::stream)
-        .filter(resourceRecord -> Type.NS == resourceRecord.type())
-        .map(ResourceRecord::toBuilder)
-        .map(builder -> builder.pointer(question))
-        .map(Builder::build)
-        .toList();
+    final List<ResourceRecord> answers =
+        Dns.INSTANCE.getMasterFile()
+            .search(question)
+            .stream()
+            .map(Zone::getRecords)
+            .flatMap(List::stream)
+            .filter(resourceRecord -> Type.NS == resourceRecord.type())
+            .map(ResourceRecord::toBuilder)
+            .map(builder -> builder.pointer(question))
+            .map(Builder::build)
+            .toList();
 
     // TODO : Add support for additional records
 
     // Create response header's flags
-    final Flags flags = query.header().flags().toBuilder().qr(QR.RESPONSE)
-        .rcode(RCode.NO_ERROR)
-        .build();
+    final Flags flags = query.header()
+                            .flags()
+                            .toBuilder()
+                            .qr(QR.RESPONSE)
+                            .rcode(RCode.NO_ERROR)
+                            .build();
 
     // Create response's header
-    final Header header = query.header().toBuilder()
-        // Set the answer count to 1
-        .ancount((short) answers.size())
-        .flags(flags)
-        .build();
+    final Header header = query.header()
+                              .toBuilder()
+                              // Set the answer count to 1
+                              .ancount((short)answers.size())
+                              .flags(flags)
+                              .build();
 
     // Create response
     return Response.builder()

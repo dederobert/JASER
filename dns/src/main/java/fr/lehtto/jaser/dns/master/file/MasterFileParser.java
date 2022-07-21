@@ -42,7 +42,8 @@ public final class MasterFileParser {
    * @return the number of entries parsed
    * @throws InvalidDnsZoneEntryException if the master file is invalid
    */
-  public static int parse(final @NotNull MasterFile masterFile, final @NotNull File file)
+  public static int parse(final @NotNull MasterFile masterFile,
+                          final @NotNull File file)
       throws InvalidDnsZoneEntryException {
     // Determine the zone name from the file name.
     final String domain;
@@ -57,7 +58,8 @@ public final class MasterFileParser {
     final List<String> lines = readLines(file);
 
     // Parse the file.
-    final ParserInputContext parserInputContext = new ParserInputContext(lines, domain);
+    final ParserInputContext parserInputContext =
+        new ParserInputContext(lines, domain);
     int count = 0;
     while (parserInputContext.hasNextLine()) {
       final String line = parserInputContext.nextLine();

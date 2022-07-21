@@ -36,9 +36,7 @@ public final class Dns implements AutoCloseable {
   /**
    * Valued constructor.
    */
-  private Dns() {
-    masterFile = new MasterFile();
-  }
+  private Dns() { masterFile = new MasterFile(); }
 
   /**
    * Starts the DNS server.
@@ -57,9 +55,7 @@ public final class Dns implements AutoCloseable {
    *
    * @return the master file
    */
-  public MasterFile getMasterFile() {
-    return masterFile;
-  }
+  public MasterFile getMasterFile() { return masterFile; }
 
   /**
    * Loads the DNS zone from a file.
@@ -71,7 +67,9 @@ public final class Dns implements AutoCloseable {
     try {
       final int count = MasterFileParser.parse(masterFile, file);
       LOG.info("Loaded {} records", count);
-      getMetricsService().map(MetricsService::getMetrics).ifPresent(metrics -> metrics.incrementZoneSize(count));
+      getMetricsService()
+          .map(MetricsService::getMetrics)
+          .ifPresent(metrics -> metrics.incrementZoneSize(count));
     } catch (final InvalidDnsZoneEntryException e) {
       LOG.error("Invalid DNS zone entry: {}", e.getMessage());
     }

@@ -21,22 +21,20 @@ public class Zone {
   private final @NotNull List<ResourceRecord> records = new ArrayList<>();
   private final @NotNull List<Zone> subZones = new ArrayList<>();
 
-
   /**
    * Valued constructor.
    *
    * @param label the label of the zone
    */
-  Zone(final @NotNull String label) {
-    this.label = label;
-  }
+  Zone(final @NotNull String label) { this.label = label; }
 
   /**
    * Gets the label of the zone.
    *
    * @return the label of the zone
    */
-  @NotNull String getLabel() {
+  @NotNull
+  String getLabel() {
     return label;
   }
 
@@ -46,7 +44,8 @@ public class Zone {
    * @return the records
    */
   @Unmodifiable
-  @NotNull List<ResourceRecord> getRecordsFlatList() {
+  @NotNull
+  List<ResourceRecord> getRecordsFlatList() {
     final List<ResourceRecord> result = new ArrayList<>(records);
     for (final Zone zone : subZones) {
       result.addAll(zone.getRecordsFlatList());
@@ -70,7 +69,8 @@ public class Zone {
    * @return the subZones
    */
   @Unmodifiable
-  @NotNull List<Zone> getSubZones() {
+  @NotNull
+  List<Zone> getSubZones() {
     return List.copyOf(subZones);
   }
 
@@ -112,7 +112,8 @@ public class Zone {
    * @return true if the zone contains a SOA record, false otherwise
    */
   private boolean isSoaPresent() {
-    return records.stream().anyMatch(r -> Type.SOA == r.type()) || subZones.stream().anyMatch(Zone::isSoaPresent);
+    return records.stream().anyMatch(r -> Type.SOA == r.type()) ||
+        subZones.stream().anyMatch(Zone::isSoaPresent);
   }
 
   /**
