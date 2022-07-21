@@ -53,7 +53,7 @@ public record AddressV6(short @NotNull [] address) implements Writable {
    * @return The new instance of IPV6 address.
    */
   public static AddressV6 of(final @NotNull String address) {
-    final String[] parts = address.split("[:]");
+    final String[] parts = address.split(":");
     final int length = parts.length;
     final short[] shorts = new short[length];
     for (int i = 0; i < length; i++) {
