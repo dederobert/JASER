@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
  * @author Lehtto
  * @since 0.1.0
  */
-public record Header(short id, @NotNull Flags flags, short qdcount, short ancount, short nscount, short arcount)
+public record Header(short id, @NotNull Flags flags, short qdcount,
+                     short ancount, short nscount, short arcount)
     implements Writable {
 
   /**
@@ -20,7 +21,7 @@ public record Header(short id, @NotNull Flags flags, short qdcount, short ancoun
   static final int HEADER_SIZE = 12;
 
   // region Constants
-  public static final int ID_LENGTH = 16; // 16 bits
+  public static final int ID_LENGTH = 16;      // 16 bits
   public static final int QDCOUNT_LENGTH = 16; // 16 bits
   public static final int ANCOUNT_LENGTH = 16; // 16 bits
   public static final int NSCOUNT_LENGTH = 16; // 16 bits
@@ -34,18 +35,14 @@ public record Header(short id, @NotNull Flags flags, short qdcount, short ancoun
    *
    * @return the builder
    */
-  public static Builder builder() {
-    return new Builder();
-  }
+  public static Builder builder() { return new Builder(); }
 
   /**
    * Creates a new builder.
    *
    * @return the builder
    */
-  public Builder toBuilder() {
-    return new Builder(this);
-  }
+  public Builder toBuilder() { return new Builder(this); }
 
   /**
    * {@inheritDoc}

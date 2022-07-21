@@ -21,7 +21,8 @@ import org.slf4j.LoggerFactory;
  */
 public class DnsClientHandler extends AbstractUdpClientHandler {
 
-  private static final Logger LOG = LoggerFactory.getLogger(DnsClientHandler.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(DnsClientHandler.class);
 
   /**
    * Valued constructor.
@@ -29,7 +30,8 @@ public class DnsClientHandler extends AbstractUdpClientHandler {
    * @param packet the client packet
    * @param socket the server socket
    */
-  public DnsClientHandler(final @NotNull DatagramPacket packet, @NotNull final DatagramSocket socket) {
+  public DnsClientHandler(final @NotNull DatagramPacket packet,
+                          @NotNull final DatagramSocket socket) {
     super(packet, socket);
   }
 
@@ -41,13 +43,16 @@ public class DnsClientHandler extends AbstractUdpClientHandler {
     LOG.info("New client connected from {}", getPacket().getAddress());
     try {
       LOG.trace("Waiting for a query...");
-      final Query query = Query.read(getPacket().getData(), getPacket().getLength());
+      final Query query =
+          Query.read(getPacket().getData(), getPacket().getLength());
       LOG.debug("Query received: {}", query);
       handleQueryWithMetrics(() -> {
         try {
           final byte[] buffer = new byte[512];
-          final int length = ResponseWriter.write(QueryHandlerFactory.fromQuery(query).handle(query), buffer);
-          getSocket().send(new DatagramPacket(buffer, length, getPacket().getAddress(), getPacket().getPort()));
+          final int length = ResponseWriter.write(
+              QueryHandlerFactory.fromQuery(query).handle(query), buffer);
+          getSocket().send(new DatagramPacket(
+              buffer, length, getPacket().getAddress(), getPacket().getPort()));
         } catch (final IOException e) {
           LOG.error("Error while sending response", e);
         }
@@ -66,14 +71,15 @@ public class DnsClientHandler extends AbstractUdpClientHandler {
   }
 
   /**
-   * Handles the query with metrics if metrics are enabled. Else, just handles the query.
+   * Handles the query with metrics if metrics are enabled. Else, just handles
+   * the query.
    *
    * @param runnable the runnable to run
    */
   private void handleQueryWithMetrics(final Runnable runnable) {
-    Dns.INSTANCE.getMetricsService().map(MetricsService::getMetrics)
+    Dns.INSTANCE.getMetricsService()
+        .map(MetricsService::getMetrics)
         .map(Metrics::getQueryTimer)
         .ifPresentOrElse(timer -> timer.record(runnable), runnable);
   }
 }
-

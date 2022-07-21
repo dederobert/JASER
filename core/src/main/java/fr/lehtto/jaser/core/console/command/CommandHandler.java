@@ -14,7 +14,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class CommandHandler {
 
-  private static final Logger LOG = LoggerFactory.getLogger(CommandHandler.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(CommandHandler.class);
 
   private @Nullable CommandHandler next;
 
@@ -61,17 +62,12 @@ public abstract class CommandHandler {
    *
    * @return the next command handler
    */
-  public @Nullable CommandHandler getNext() {
-    return next;
-  }
+  public @Nullable CommandHandler getNext() { return next; }
 
   /**
    * Sets the next command handler.
    *
    * @param next the next command handler
    */
-  public void setNext(final @Nullable CommandHandler next) {
-    this.next = next;
-  }
-
+  public void setNext(final @Nullable CommandHandler next) { this.next = next; }
 }

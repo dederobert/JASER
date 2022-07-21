@@ -21,7 +21,6 @@ public record Query(@NotNull Header header, @NotNull List<Question> questions) {
 
   private static final Logger LOG = LoggerFactory.getLogger(Query.class);
 
-
   /**
    * Reads a DNS query from a socket.
    *
@@ -33,9 +32,11 @@ public record Query(@NotNull Header header, @NotNull List<Question> questions) {
     LOG.trace("Read {} bytes", length);
 
     // Read the header
-    final Header header = HeaderParser.parse(Arrays.copyOfRange(bytes, 0, HEADER_SIZE));
+    final Header header =
+        HeaderParser.parse(Arrays.copyOfRange(bytes, 0, HEADER_SIZE));
     // Read the questions
-    final List<Question> questions = QuestionParser.parse(bytes, HEADER_SIZE, length);
+    final List<Question> questions =
+        QuestionParser.parse(bytes, HEADER_SIZE, length);
 
     return new Query(header, questions);
   }
@@ -45,18 +46,14 @@ public record Query(@NotNull Header header, @NotNull List<Question> questions) {
    *
    * @return the builder
    */
-  public static @NotNull Builder builder() {
-    return new Builder();
-  }
+  public static @NotNull Builder builder() { return new Builder(); }
 
   /**
    * Builder for the query.
    *
    * @return the builder
    */
-  public @NotNull Builder toBuilder() {
-    return new Builder(this);
-  }
+  public @NotNull Builder toBuilder() { return new Builder(this); }
 
   /**
    * Builder for the query.

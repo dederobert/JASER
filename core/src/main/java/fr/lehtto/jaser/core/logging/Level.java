@@ -8,6 +8,9 @@ package fr.lehtto.jaser.core.logging;
  */
 public enum Level {
 
-  ERROR, WARN, INFO, DEBUG, TRACE;
-
+  ERROR,
+  WARN,
+  INFO,
+  DEBUG,
+  TRACE;
 }
