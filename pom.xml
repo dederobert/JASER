@@ -101,12 +101,21 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
-
-      <plugin>
-        <groupId>se.bjurr.gitchangelog</groupId>
-        <artifactId>git-changelog-maven-plugin</artifactId>
-      </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>changelog</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>se.bjurr.gitchangelog</groupId>
+            <artifactId>git-changelog-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
