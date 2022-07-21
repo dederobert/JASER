@@ -28,7 +28,8 @@ public class TcpServer<H extends AbstractTcpClientHandler> extends Server<H> {
    * @param bindAddress  the bind address
    * @param handlerClass the handler class
    */
-  public TcpServer(final int port, final @NotNull InetAddress bindAddress, final @NotNull Class<H> handlerClass) {
+  public TcpServer(final int port, final @NotNull InetAddress bindAddress,
+                   final @NotNull Class<H> handlerClass) {
     super(port, bindAddress, handlerClass);
   }
 
@@ -40,9 +41,10 @@ public class TcpServer<H extends AbstractTcpClientHandler> extends Server<H> {
   @Override
   protected H acceptConnection()
       throws IOException, InvocationTargetException, InstantiationException,
-      IllegalAccessException, NoSuchMethodException {
+             IllegalAccessException, NoSuchMethodException {
     assert null != serverSocket;
-    return getHandlerClass().getDeclaredConstructor(Socket.class)
+    return getHandlerClass()
+        .getDeclaredConstructor(Socket.class)
         .newInstance(serverSocket.accept());
   }
 

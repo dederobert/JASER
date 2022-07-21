@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Range;
  * @since 0.1.0
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
-public record AddressV6(short @NotNull [] address) implements Writable {
+public record AddressV6(short @NotNull[] address) implements Writable {
 
   private static final int HEX_RADIX = 16;
   private static final int NUMBER_OF_BYTE = 16;
@@ -32,18 +32,17 @@ public record AddressV6(short @NotNull [] address) implements Writable {
    * @return The new instance of IPV6 address.
    */
   @SuppressWarnings("MethodWithTooManyParameters")
-  public static AddressV6 of(
-      final @Range(from = 0, to = 65_536) int a1,
-      final @Range(from = 0, to = 65_536) int a2,
-      final @Range(from = 0, to = 65_536) int a3,
-      final @Range(from = 0, to = 65_536) int a4,
-      final @Range(from = 0, to = 65_536) int a5,
-      final @Range(from = 0, to = 65_536) int a6,
-      final @Range(from = 0, to = 65_536) int a7,
-      final @Range(from = 0, to = 65_536) int a8
-  ) {
-    return new AddressV6(
-        new short[]{(short) a1, (short) a2, (short) a3, (short) a4, (short) a5, (short) a6, (short) a7, (short) a8});
+  public static AddressV6 of(final @Range(from = 0, to = 65_536) int a1,
+                             final @Range(from = 0, to = 65_536) int a2,
+                             final @Range(from = 0, to = 65_536) int a3,
+                             final @Range(from = 0, to = 65_536) int a4,
+                             final @Range(from = 0, to = 65_536) int a5,
+                             final @Range(from = 0, to = 65_536) int a6,
+                             final @Range(from = 0, to = 65_536) int a7,
+                             final @Range(from = 0, to = 65_536) int a8) {
+    return new AddressV6(new short[] {(short)a1, (short)a2, (short)a3,
+                                      (short)a4, (short)a5, (short)a6,
+                                      (short)a7, (short)a8});
   }
 
   /**
@@ -57,13 +56,13 @@ public record AddressV6(short @NotNull [] address) implements Writable {
     final int length = parts.length;
     final short[] shorts = new short[length];
     for (int i = 0; i < length; i++) {
-      shorts[i] = (short) Integer.parseInt(parts[i], HEX_RADIX);
+      shorts[i] = (short)Integer.parseInt(parts[i], HEX_RADIX);
     }
     return new AddressV6(shorts);
   }
 
   @Override
-  public byte @NotNull [] getBytes() {
+  public byte @NotNull[] getBytes() {
     return ByteBuffer.allocate(NUMBER_OF_BYTE)
         .putShort(address[0])
         .putShort(address[1])
@@ -84,7 +83,7 @@ public record AddressV6(short @NotNull [] address) implements Writable {
     if (null == o || getClass() != o.getClass()) {
       return false;
     }
-    final AddressV6 addressV4 = (AddressV6) o;
+    final AddressV6 addressV4 = (AddressV6)o;
     return Arrays.equals(address, addressV4.address);
   }
 
@@ -95,8 +94,7 @@ public record AddressV6(short @NotNull [] address) implements Writable {
 
   @Override
   public String toString() {
-    return "IPV6{" +
-        HexFormat.of().toHexDigits(address[0]) + ':' +
+    return "IPV6{" + HexFormat.of().toHexDigits(address[0]) + ':' +
         HexFormat.of().toHexDigits(address[1]) + ':' +
         HexFormat.of().toHexDigits(address[2]) + ':' +
         HexFormat.of().toHexDigits(address[3]) + ':' +

@@ -29,7 +29,8 @@ public class UdpServer<H extends AbstractUdpClientHandler> extends Server<H> {
    * @param bindAddress  the bind address
    * @param handlerClass the handler class
    */
-  public UdpServer(final int port, final @NotNull InetAddress bindAddress, final @NotNull Class<H> handlerClass) {
+  public UdpServer(final int port, final @NotNull InetAddress bindAddress,
+                   final @NotNull Class<H> handlerClass) {
     super(port, bindAddress, handlerClass);
   }
 
@@ -41,15 +42,15 @@ public class UdpServer<H extends AbstractUdpClientHandler> extends Server<H> {
   @Override
   protected H acceptConnection()
       throws IOException, InvocationTargetException, InstantiationException,
-      IllegalAccessException, NoSuchMethodException {
-    final DatagramPacket datagramPacket = new DatagramPacket(new byte[512], 512);
+             IllegalAccessException, NoSuchMethodException {
+    final DatagramPacket datagramPacket =
+        new DatagramPacket(new byte[512], 512);
     assert null != datagramSocket;
     datagramSocket.receive(datagramPacket);
     // Create a new client handler
     return getHandlerClass()
         .getDeclaredConstructor(DatagramPacket.class, DatagramSocket.class)
         .newInstance(datagramPacket, datagramSocket);
-
   }
 
   /**

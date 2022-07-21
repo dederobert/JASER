@@ -20,7 +20,8 @@ import org.jetbrains.annotations.UnmodifiableView;
  * @version 0.2.0
  * @since 0.1.0
  */
-abstract class Server<H extends AbstractClientHandler> implements AutoCloseable, Runnable {
+abstract class Server<H extends AbstractClientHandler>
+    implements AutoCloseable, Runnable {
 
   private static final Logger LOG = LogManager.getLogger(Server.class);
 
@@ -38,7 +39,7 @@ abstract class Server<H extends AbstractClientHandler> implements AutoCloseable,
    * @param handlerClass the handler class
    */
   protected Server(final int port, @NotNull final InetAddress bindAddress,
-      @NotNull final Class<H> handlerClass) {
+                   @NotNull final Class<H> handlerClass) {
     this.port = port;
     this.bindAddress = bindAddress;
     this.handlerClass = handlerClass;
@@ -70,8 +71,7 @@ abstract class Server<H extends AbstractClientHandler> implements AutoCloseable,
    *
    * @throws IOException if an error occurs
    */
-  @OverrideOnly
-  protected abstract void stop() throws IOException;
+  @OverrideOnly protected abstract void stop() throws IOException;
 
   /**
    * Starts the server and waits for connections.
@@ -87,8 +87,10 @@ abstract class Server<H extends AbstractClientHandler> implements AutoCloseable,
         final H clientHandler = acceptConnection();
         LOG.debug("New client connected");
         addClientHandler(clientHandler);
-        final Thread thread = new Thread(clientHandler,
-            "ClientHandler-" + clientHandler.getUuid().getMostSignificantBits());
+        final Thread thread =
+            new Thread(clientHandler,
+                       "ClientHandler-" +
+                           clientHandler.getUuid().getMostSignificantBits());
         clientHandler.setThread(thread);
         thread.start();
       }
@@ -97,16 +99,23 @@ abstract class Server<H extends AbstractClientHandler> implements AutoCloseable,
         LOG.error("Error while accepting client connection", e);
       }
     } catch (final InvocationTargetException e) {
-      LOG.error("Error while creating client handler, check your handler class. "
-          + "Handler constructor throws an exception", e);
+      LOG.error(
+          "Error while creating client handler, check your handler class. "
+              + "Handler constructor throws an exception",
+          e);
     } catch (final InstantiationException e) {
-      LOG.error("Error while creating client handler, could not instantiate class. "
-          + "Hint: handler class must not be abstract", e);
+      LOG.error(
+          "Error while creating client handler, could not instantiate class. "
+              + "Hint: handler class must not be abstract",
+          e);
     } catch (final IllegalAccessException e) {
       LOG.error("Error while creating client handler, illegal access", e);
     } catch (final NoSuchMethodException e) {
-      LOG.error("Error while creating client handler, no constructor found. "
-          + "Hint: handler class must have a public constructor with a single Socket parameter", e);
+      LOG.error(
+          "Error while creating client handler, no constructor found. "
+              +
+              "Hint: handler class must have a public constructor with a single Socket parameter",
+          e);
     }
 
     // Wait for all client handlers to finish
@@ -150,23 +159,22 @@ abstract class Server<H extends AbstractClientHandler> implements AutoCloseable,
    */
   protected abstract H acceptConnection()
       throws IOException, InvocationTargetException, InstantiationException,
-      IllegalAccessException, NoSuchMethodException;
+             IllegalAccessException, NoSuchMethodException;
 
   /**
    * Gets the port.
    *
    * @return the port
    */
-  int getPort() {
-    return port;
-  }
+  int getPort() { return port; }
 
   /**
    * Gets the bind address.
    *
    * @return the bind address
    */
-  @NotNull InetAddress getBindAddress() {
+  @NotNull
+  InetAddress getBindAddress() {
     return bindAddress;
   }
 
@@ -175,7 +183,8 @@ abstract class Server<H extends AbstractClientHandler> implements AutoCloseable,
    *
    * @return the handler class
    */
-  @NotNull Class<H> getHandlerClass() {
+  @NotNull
+  Class<H> getHandlerClass() {
     return handlerClass;
   }
 
@@ -204,7 +213,5 @@ abstract class Server<H extends AbstractClientHandler> implements AutoCloseable,
    *
    * @return true, if it is running
    */
-  private boolean isRunning() {
-    return running;
-  }
+  private boolean isRunning() { return running; }
 }
