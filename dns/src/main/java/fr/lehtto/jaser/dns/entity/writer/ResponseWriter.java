@@ -37,7 +37,8 @@ public final class ResponseWriter {
    */
   @Contract(mutates = "param2")
   @Loggable(Loggable.DEBUG)
-  public static int write(final @NotNull Response response, final byte @NotNull [] buffer) {
+  public static int write(final @NotNull Response response,
+                          final byte @NotNull[] buffer) {
     LOG.debug("Write response");
 
     response.resolvePointers();
