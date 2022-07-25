@@ -7,7 +7,7 @@
 
   <groupId>fr.lehtto</groupId>
   <artifactId>jaser-bom</artifactId>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>JASER BOM (Bill Of Material)</name>

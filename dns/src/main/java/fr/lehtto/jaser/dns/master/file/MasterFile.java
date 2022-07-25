@@ -1,6 +1,6 @@
 package fr.lehtto.jaser.dns.master.file;
 
-import fr.lehtto.jaser.dns.entity.Question;
+import fr.lehtto.jaser.dns.entity.DomainName;
 import fr.lehtto.jaser.dns.entity.ResourceRecord;
 import fr.lehtto.jaser.dns.entity.enumration.DnsClass;
 import fr.lehtto.jaser.dns.entity.parser.InvalidDnsZoneEntryException;
@@ -145,11 +145,11 @@ public class MasterFile {
   /**
    * Searches for a resource record in the master file.
    *
-   * @param question the question to search for
+   * @param domainName the domain name to search for
    * @return the resource record if found
    */
-  public Optional<Zone> search(final @NotNull Question question) {
-    final String[] labels = question.name().labels();
+  public Optional<Zone> search(final @NotNull DomainName domainName) {
+    final String[] labels = domainName.labels();
     for (final Zone zone : zones) {
       final Optional<Zone> optionalZone =
           zone.search(labels, labels.length - 1);

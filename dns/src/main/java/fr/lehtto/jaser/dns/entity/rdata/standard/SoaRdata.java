@@ -3,6 +3,7 @@ package fr.lehtto.jaser.dns.entity.rdata.standard;
 import fr.lehtto.jaser.core.utils.NumberUtils;
 import fr.lehtto.jaser.dns.entity.DomainName;
 import fr.lehtto.jaser.dns.entity.enumration.Type;
+import fr.lehtto.jaser.dns.entity.rdata.MultiNamedRData;
 import fr.lehtto.jaser.dns.entity.rdata.RDataParser;
 import fr.lehtto.jaser.dns.entity.rdata.Rdata;
 import java.nio.ByteBuffer;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
  * @version 0.1.0
  */
 public record SoaRdata(@NotNull DomainName origin, @NotNull DomainName contact, int serial, int refresh, int retry,
-                       int expire, int minimum) implements Rdata {
+                       int expire, int minimum) implements Rdata, MultiNamedRData {
 
   @Override
   public byte @NotNull [] getBytes() {
@@ -44,6 +45,11 @@ public record SoaRdata(@NotNull DomainName origin, @NotNull DomainName contact, 
         ", expire=" + expire +
         ", minimum=" + minimum +
         '}';
+  }
+
+  @Override
+  public @NotNull DomainName[] getNames() {
+    return new DomainName[]{origin, contact};
   }
 
   /**

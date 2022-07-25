@@ -8,6 +8,7 @@ forum 150 IN A 192.168.0.1
           IN 150 MX 10 mail.example.com ; TTL after class
       150    NS ns1.example.com
              TXT "1|localhost test"
+ns1   150 IN A 192.168.0.1
 
 ; ZONE example.com for IN class
 test.example.fr. 150 IN A 192.168.0.1
