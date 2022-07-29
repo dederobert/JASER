@@ -40,14 +40,6 @@ public record MxRdata(short preference, @NotNull DomainName exchange) implements
   }
 
   @Override
-  public String toString() {
-    return "MX RDATA{" +
-        "preference=" + preference +
-        ", exchange='" + exchange + '\'' +
-        '}';
-  }
-
-  @Override
   public @NotNull DomainName getName() {
     return exchange;
   }

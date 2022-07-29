@@ -34,11 +34,6 @@ public record NsRdata(@NotNull DomainName nsdName) implements Rdata, NamedRData 
   }
 
   @Override
-  public String toString() {
-    return "NS RDATA{" + nsdName + '}';
-  }
-
-  @Override
   public @NotNull DomainName getName() {
     return nsdName;
   }

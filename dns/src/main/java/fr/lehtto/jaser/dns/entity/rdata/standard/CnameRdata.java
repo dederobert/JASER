@@ -34,11 +34,6 @@ public record CnameRdata(@NotNull DomainName cname) implements Rdata, NamedRData
   }
 
   @Override
-  public String toString() {
-    return "CNAME RDATA{" + cname + '}';
-  }
-
-  @Override
   public @NotNull DomainName getName() {
     return cname;
   }

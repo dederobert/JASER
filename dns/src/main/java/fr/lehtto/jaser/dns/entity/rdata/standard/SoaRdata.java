@@ -54,19 +54,6 @@ public record SoaRdata(@NotNull DomainName origin, @NotNull DomainName contact, 
   }
 
   @Override
-  public String toString() {
-    return "SOA RDATA{" +
-        "origin='" + origin + '\'' +
-        ", contact='" + contact + '\'' +
-        ", serial=" + serial +
-        ", refresh=" + refresh +
-        ", retry=" + retry +
-        ", expire=" + expire +
-        ", minimum=" + minimum +
-        '}';
-  }
-
-  @Override
   public @NotNull DomainName[] getNames() {
     return new DomainName[]{origin, contact};
   }

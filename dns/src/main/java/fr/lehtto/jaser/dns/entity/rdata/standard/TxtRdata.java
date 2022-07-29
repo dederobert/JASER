@@ -31,11 +31,6 @@ public record TxtRdata(@NotNull String txt) implements Rdata {
     return txt.length();
   }
 
-  @Override
-  public String toString() {
-    return "TXT RDATA{" + txt + '}';
-  }
-
   /**
    * Parses the given string into a TXT RDATA.
    */

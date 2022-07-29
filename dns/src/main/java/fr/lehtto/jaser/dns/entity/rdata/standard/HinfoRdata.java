@@ -38,14 +38,6 @@ public record HinfoRdata(@NotNull String hardware, @NotNull String software) imp
     return hardware.length() + software.length();
   }
 
-  @Override
-  public String toString() {
-    return "HINFO RDATA{" +
-        "hardware='" + hardware + '\'' +
-        ", software='" + software + '\'' +
-        '}';
-  }
-
   /**
    * Parses the given string into a HINFO RDATA.
    */
