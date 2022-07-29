@@ -4,7 +4,7 @@ package fr.lehtto.jaser.core.logging;
  * Logging level.
  *
  * @author lehtto
- * @version 0.3.0
+ * @version 1.0.0
  */
 public enum Level {
 
@@ -12,5 +12,5 @@ public enum Level {
   WARN,
   INFO,
   DEBUG,
-  TRACE;
+  TRACE
 }

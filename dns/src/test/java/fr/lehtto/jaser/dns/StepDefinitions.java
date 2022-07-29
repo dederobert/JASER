@@ -30,7 +30,6 @@ import java.util.List;
 @SuppressWarnings("JavaDoc")
 public class StepDefinitions {
 
-
   private Query query;
   private Response response;
 
@@ -40,41 +39,39 @@ public class StepDefinitions {
     final MasterFile masterFile = new MasterFile();
 
     masterFile.addRecord(ResourceRecord.builder()
-        .name(DomainName.of("www.example.com"))
-        .type(Type.A)
-        .recordClass(DnsClass.IN)
-        .ttl(1)
-        .data(new ARdata(AddressV4.of("192.168.1.1")))
-        .build());
+                             .name(DomainName.of("www.example.com"))
+                             .type(Type.A)
+                             .recordClass(DnsClass.IN)
+                             .ttl(1)
+                             .data(new ARdata(AddressV4.of("192.168.1.1")))
+                             .build());
 
-    Dns.INSTANCE.initializeMasterFiles(List.of(
-        masterFile
-    ));
+    Dns.INSTANCE.initializeMasterFiles(masterFile);
   }
 
   @Given("I have {string} as hostname")
   public void iHaveHostname(final String hostname) {
     this.query = Query.builder()
-        .header(Header.builder()
-            .id((short) 1)
-            .flags(Flags.builder()
-                .qr(QR.QUERY)
-                .opcode(OpCode.QUERY)
-                .rcode(RCode.NO_ERROR)
-                .aa(false)
-                .tc(false)
-                .rd(false)
-                .ra(false)
-                .z((byte) 0)
-                .build())
-            .qdcount((short) 1)
-            .build())
-        .questions(List.of(Question.builder()
-            .name(hostname)
-            .recordClass(DnsClass.IN)
-            .type(Type.A)
-            .build()))
-        .build();
+                     .header(Header.builder()
+                                 .id((short)1)
+                                 .flags(Flags.builder()
+                                            .qr(QR.QUERY)
+                                            .opcode(OpCode.QUERY)
+                                            .rcode(RCode.NO_ERROR)
+                                            .aa(false)
+                                            .tc(false)
+                                            .rd(false)
+                                            .ra(false)
+                                            .z((byte)0)
+                                            .build())
+                                 .qdcount((short)1)
+                                 .build())
+                     .questions(List.of(Question.builder()
+                                            .name(DomainName.of(hostname))
+                                            .recordClass(DnsClass.IN)
+                                            .type(Type.A)
+                                            .build()))
+                     .build();
   }
 
   @When("I query the IP address of the hostname")
@@ -83,12 +80,16 @@ public class StepDefinitions {
   }
 
   @Then("I should see {string} as IP address of the hostname")
-  public void iShouldSeeTheIPAddressOfTheHostname(final String expectedIpAddress) {
+  public void
+  iShouldSeeTheIPAddressOfTheHostname(final String expectedIpAddress) {
     assertNotNull(response, "Response is null");
-    assertEquals(1, response.answerRecords().size(), "Answer records size is not 1");
-    assertTrue(response.answerRecords().get(0).data() instanceof ARdata, "Answer record data is not ARdata");
-    final AddressV4 address = ((ARdata) response.answerRecords().get(0).data()).address();
-    assertEquals(expectedIpAddress, address.toDottedDecimal(), "IP address is not correct");
+    assertEquals(1, response.answerRecords().size(),
+                 "Answer records size is not 1");
+    assertTrue(response.answerRecords().get(0).data() instanceof ARdata,
+               "Answer record data is not ARdata");
+    final AddressV4 address =
+        ((ARdata)response.answerRecords().get(0).data()).address();
+    assertEquals(expectedIpAddress, address.toDottedDecimal(),
+                 "IP address is not correct");
   }
-
 }

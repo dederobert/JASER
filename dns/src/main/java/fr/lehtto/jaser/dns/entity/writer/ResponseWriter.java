@@ -1,5 +1,6 @@
 package fr.lehtto.jaser.dns.entity.writer;
 
+import com.jcabi.aspects.Loggable;
 import fr.lehtto.jaser.dns.entity.Question;
 import fr.lehtto.jaser.dns.entity.ResourceRecord;
 import fr.lehtto.jaser.dns.entity.Response;
@@ -35,6 +36,7 @@ public final class ResponseWriter {
    * @return the number of bytes written
    */
   @Contract(mutates = "param2")
+  @Loggable(Loggable.DEBUG)
   public static int write(final @NotNull Response response,
                           final byte @NotNull[] buffer) {
     LOG.debug("Write response");

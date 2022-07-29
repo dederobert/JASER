@@ -4,6 +4,7 @@ import fr.lehtto.jaser.core.utils.NumberUtils;
 import fr.lehtto.jaser.dns.entity.DomainName;
 import fr.lehtto.jaser.dns.entity.enumration.Type;
 import fr.lehtto.jaser.dns.entity.parser.InvalidDnsZoneEntryException;
+import fr.lehtto.jaser.dns.entity.rdata.NamedRData;
 import fr.lehtto.jaser.dns.entity.rdata.RDataParser;
 import fr.lehtto.jaser.dns.entity.rdata.Rdata;
 import java.nio.ByteBuffer;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
  * @author lehtto
  * @version 0.1.0
  */
-public record MxRdata(short preference, @NotNull DomainName exchange) implements Rdata {
+public record MxRdata(short preference, @NotNull DomainName exchange) implements Rdata, NamedRData {
 
   @Override
   public byte @NotNull [] getBytes() {
@@ -33,6 +34,11 @@ public record MxRdata(short preference, @NotNull DomainName exchange) implements
         "preference=" + preference +
         ", exchange='" + exchange + '\'' +
         '}';
+  }
+
+  @Override
+  public @NotNull DomainName getName() {
+    return exchange;
   }
 
   /**

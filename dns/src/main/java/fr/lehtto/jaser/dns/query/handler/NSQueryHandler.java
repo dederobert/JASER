@@ -9,7 +9,6 @@ import fr.lehtto.jaser.dns.entity.ResourceRecord;
 import fr.lehtto.jaser.dns.entity.Response;
 import fr.lehtto.jaser.dns.entity.enumration.QR;
 import fr.lehtto.jaser.dns.entity.enumration.RCode;
-import fr.lehtto.jaser.dns.master.file.MasterFileQuerier;
 import fr.lehtto.jaser.dns.metrics.MetricsService;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
  * @since 0.2.0
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
-final class NSQueryHandler implements QueryHandler{
+final class NSQueryHandler implements QueryHandler {
 
   static final QueryHandler INSTANCE = new NSQueryHandler();
 
@@ -34,35 +33,29 @@ final class NSQueryHandler implements QueryHandler{
 
   @Override
   public @NotNull Response handleValidatedQuery(final @NotNull Query query) {
-    Dns.INSTANCE.getMetricsService().map(MetricsService::getMetrics).ifPresent(metrics -> metrics.incrementNsQuery(1));
+    Dns.INSTANCE.getMetricsService()
+        .map(MetricsService::getMetrics)
+        .ifPresent(metrics -> metrics.incrementNsQuery(1));
     // Current implementation only supports one question
     final Question question = query.questions().get(0);
 
-    final List<ResourceRecord> answers = new MasterFileQuerier(Dns.INSTANCE.getMasterFiles())
-        .withClass(question.recordClass())
-        .withType(question.type())
-        .withDomain(question.name())
-        .getRecordsStream()
-        .map(resourceRecord -> ResourceRecord.builder()
-            .pointer(question)
-            .type(resourceRecord.type())
-            .recordClass(resourceRecord.recordClass())
-            .ttl(resourceRecord.ttl())
-            .data(resourceRecord.data())
-            .build())
-        .toList();
-
-    // TODO : Add support for additional records
+    final List<ResourceRecord> answers = QueryHandlerHelper.INSTANCE.search(question);
+    final List<ResourceRecord> additionalRecords = QueryHandlerHelper.INSTANCE.resolveAdditionalRecords(question,
+        answers);
 
     // Create response header's flags
-    final Flags flags = query.header().flags().toBuilder().qr(QR.RESPONSE)
-        .rcode(RCode.NO_ERROR)
-        .build();
+    final Flags flags = query.header()
+                            .flags()
+                            .toBuilder()
+                            .qr(QR.RESPONSE)
+                            .rcode(RCode.NO_ERROR)
+                            .build();
 
     // Create response's header
     final Header header = query.header().toBuilder()
         // Set the answer count to 1
         .ancount((short) answers.size())
+        .arcount((short) additionalRecords.size())
         .flags(flags)
         .build();
 
@@ -72,7 +65,7 @@ final class NSQueryHandler implements QueryHandler{
         .questions(query.questions())
         .answers(answers)
         .noAuthorityRecords()
-        .noAdditionalRecords()
+        .additionalRecords(additionalRecords)
         .build();
   }
 }

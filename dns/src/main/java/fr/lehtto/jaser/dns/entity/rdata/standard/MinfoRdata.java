@@ -2,6 +2,7 @@ package fr.lehtto.jaser.dns.entity.rdata.standard;
 
 import fr.lehtto.jaser.dns.entity.DomainName;
 import fr.lehtto.jaser.dns.entity.enumration.Type;
+import fr.lehtto.jaser.dns.entity.rdata.MultiNamedRData;
 import fr.lehtto.jaser.dns.entity.rdata.RDataParser;
 import fr.lehtto.jaser.dns.entity.rdata.Rdata;
 import java.nio.ByteBuffer;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
  * @author lehtto
  * @version 0.1.0
  */
-public record MinfoRdata(@NotNull DomainName rmailbx, @NotNull DomainName emailbx) implements Rdata {
+public record MinfoRdata(@NotNull DomainName rmailbx, @NotNull DomainName emailbx) implements Rdata, MultiNamedRData {
 
   @Override
   public byte @NotNull [] getBytes() {
@@ -24,6 +25,11 @@ public record MinfoRdata(@NotNull DomainName rmailbx, @NotNull DomainName emailb
     buffer.put(rmailbxBytes);
     buffer.put(emailbxBytes);
     return buffer.array();
+  }
+
+  @Override
+  public @NotNull DomainName[] getNames() {
+    return new DomainName[]{rmailbx, emailbx};
   }
 
   /**

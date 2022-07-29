@@ -37,31 +37,30 @@ public final class MasterFileParser {
   /**
    * Parses a DNS master file.
    *
-   * @param masterFile the master file to parse
-   * @return the parsed master file
+   * @param masterFile the master file to add the records to
+   * @param file       the file to parse
+   * @return the number of entries parsed
    * @throws InvalidDnsZoneEntryException if the master file is invalid
    */
-  public static @NotNull MasterFile parse(final File masterFile)
+  public static int parse(final @NotNull MasterFile masterFile,
+                          final @NotNull File file)
       throws InvalidDnsZoneEntryException {
     // Determine the zone name from the file name.
     final String domain;
-    if (masterFile.getName().endsWith(".zone")) {
-      domain =
-          masterFile.getName().substring(0, masterFile.getName().length() - 4);
+    if (file.getName().endsWith(".zone")) {
+      domain = file.getName().substring(0, file.getName().length() - 4);
     } else {
       LOG.warn("Please consider using a .zone file.");
-      domain = masterFile.getName() + '.';
+      domain = file.getName() + '.';
     }
 
     // Read the file.
-    final List<String> lines = readLines(masterFile);
-    // Create the master file.
-    final MasterFile master = new MasterFile();
+    final List<String> lines = readLines(file);
 
     // Parse the file.
     final ParserInputContext parserInputContext =
         new ParserInputContext(lines, domain);
-    // TODO remove this part.
+    int count = 0;
     while (parserInputContext.hasNextLine()) {
       final String line = parserInputContext.nextLine();
       if (line.isEmpty()) {
@@ -80,7 +79,7 @@ public final class MasterFileParser {
 
       if (ParseTokenStateMachine.CONTROL == parsedTokens.get(0).type()) {
         // This is a control line.
-        handleControlLine(masterFile, parsedTokens, parserInputContext);
+        handleControlLine(file, parsedTokens, parserInputContext);
         continue;
       }
 
@@ -101,9 +100,10 @@ public final class MasterFileParser {
               .data(RDataFactory.create(type, data))
               .build();
 
-      master.addRecord(resourceRecord);
+      masterFile.addRecord(resourceRecord);
+      count++;
     }
-    return master;
+    return count;
   }
 
   /**
