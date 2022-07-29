@@ -46,7 +46,7 @@ JASER is a collection of several Java servers. Currently, it consists of:
 
 ## Arctic tern (1.0.0) - 29/07/2022
 
-- [GitHub release notes](https://github.com/dederobert/JASER/releases/tag/v1.0.0-arctic-tern)
+- [GitHub release notes](https://github.com/dederobert/JASER/releases/tag/v1.0.0)
 - [Changelog](CHANGELOG.md#v1-0-0-arctic-tern)
 
 First release of JASER. It is a DNS server that can be used to resolve DNS queries based on master files.
