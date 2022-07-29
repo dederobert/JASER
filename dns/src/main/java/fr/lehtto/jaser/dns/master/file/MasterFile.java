@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 /**
@@ -48,7 +49,9 @@ public class MasterFile {
    *
    * @return the zone's size
    */
-  public int size() { return zones.stream().mapToInt(Zone::size).sum(); }
+  public int size() {
+    return zones.stream().mapToInt(Zone::size).sum();
+  }
 
   /**
    * Gets the zone's records.
@@ -70,39 +73,26 @@ public class MasterFile {
    *
    * @return the zone's class
    */
-  public DnsClass getDnsClass() { return dnsClass; }
+  public DnsClass getDnsClass() {
+    return dnsClass;
+  }
 
   /**
    * Inserts a resource record in the master file.
    *
    * @param resourceRecord the resource record to insert
    * @param labels         the labels of the resource record
-   * @param labelPosition  the position of the label to insert the resource
-   *     record in
+   * @param labelPosition  the position of the label to insert the resource record in
    */
-  private void insertResourceRecord(final
-                                    @NotNull ResourceRecord resourceRecord,
-                                    final String[] labels,
-                                    final int labelPosition) {
+  private void insertResourceRecord(final @NotNull ResourceRecord resourceRecord,
+      final String[] labels,
+      final int labelPosition) {
     final @NotNull List<Zone> children = this.zones;
 
-    for (final Zone zone : children) {
-      if (labels[labelPosition].equals(zone.getLabel())) {
-        if (0 == labelPosition) {
-          zone.addRecord(resourceRecord);
-          return;
-        }
-        insertResourceRecord(zone, resourceRecord, labels, labelPosition - 1);
-        return;
-      }
+    final Zone newZone = insertResourceRecord(children, resourceRecord, labels, labelPosition);
+    if (null != newZone) {
+      this.zones.add(newZone);
     }
-    final Zone newZone = new Zone(labels[labelPosition]);
-    if (0 == labelPosition) {
-      newZone.addRecord(resourceRecord);
-    } else {
-      insertResourceRecord(newZone, resourceRecord, labels, labelPosition - 1);
-    }
-    zones.add(newZone);
   }
 
   /**
@@ -111,24 +101,45 @@ public class MasterFile {
    * @param parent         the parent zone
    * @param resourceRecord the resource record to insert
    * @param labels         the labels of the resource record
-   * @param labelPosition  the position of the label to insert the resource
-   *     record in
+   * @param labelPosition  the position of the label to insert the resource record in
    */
   private void insertResourceRecord(final @NotNull Zone parent,
-                                    final
-                                    @NotNull ResourceRecord resourceRecord,
-                                    final String[] labels,
-                                    final int labelPosition) {
+      final @NotNull ResourceRecord resourceRecord,
+      final String[] labels,
+      final int labelPosition) {
     final @NotNull List<Zone> children = parent.getSubZones();
+    final Zone newZone = insertResourceRecord(children, resourceRecord, labels, labelPosition);
+    if (null != newZone) {
+      final List<Zone> newChildren = new ArrayList<>(children);
+      newChildren.add(newZone);
+      parent.setSubZones(newChildren);
+    }
+  }
 
+
+  /**
+   * Inserts a resource record in the master file.
+   *
+   * @param children       the children zones
+   * @param resourceRecord the resource record to insert
+   * @param labels         the labels of the resource record
+   * @param labelPosition  the position of the label to insert the resource
+   * @return the new zone or null if zone already exists
+   */
+  @Nullable
+  private Zone insertResourceRecord(final @NotNull List<Zone> children,
+      final
+      @NotNull ResourceRecord resourceRecord,
+      final String[] labels,
+      final int labelPosition) {
     for (final Zone zone : children) {
       if (labels[labelPosition].equals(zone.getLabel())) {
         if (0 == labelPosition) {
           zone.addRecord(resourceRecord);
-          return;
+          return null;
         }
         insertResourceRecord(zone, resourceRecord, labels, labelPosition - 1);
-        return;
+        return null;
       }
     }
     final Zone newZone = new Zone(labels[labelPosition]);
@@ -137,10 +148,9 @@ public class MasterFile {
     } else {
       insertResourceRecord(newZone, resourceRecord, labels, labelPosition - 1);
     }
-    final List<Zone> newChildren = new ArrayList<>(children);
-    newChildren.add(newZone);
-    parent.setSubZones(newChildren);
+    return newZone;
   }
+
 
   /**
    * Searches for a resource record in the master file.
