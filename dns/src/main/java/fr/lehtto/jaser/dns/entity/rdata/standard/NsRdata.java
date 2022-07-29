@@ -3,6 +3,7 @@ package fr.lehtto.jaser.dns.entity.rdata.standard;
 import fr.lehtto.jaser.dns.entity.DomainName;
 import fr.lehtto.jaser.dns.entity.enumration.Type;
 import fr.lehtto.jaser.dns.entity.parser.InvalidDnsZoneEntryException;
+import fr.lehtto.jaser.dns.entity.rdata.NamedRData;
 import fr.lehtto.jaser.dns.entity.rdata.RDataParser;
 import fr.lehtto.jaser.dns.entity.rdata.Rdata;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
  * @author lehtto
  * @version 0.1.0
  */
-public record NsRdata(@NotNull DomainName nsdName) implements Rdata {
+public record NsRdata(@NotNull DomainName nsdName) implements Rdata, NamedRData {
 
   @Override
   public byte @NotNull [] getBytes() {
@@ -24,6 +25,11 @@ public record NsRdata(@NotNull DomainName nsdName) implements Rdata {
   @Override
   public String toString() {
     return "NS RDATA{" + nsdName + '}';
+  }
+
+  @Override
+  public @NotNull DomainName getName() {
+    return nsdName;
   }
 
   /**

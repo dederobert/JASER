@@ -6,7 +6,7 @@
   <parent>
     <artifactId>jaser</artifactId>
     <groupId>fr.lehtto</groupId>
-    <version>0.3.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -24,7 +24,7 @@
       <dependency>
         <groupId>fr.lehtto</groupId>
         <artifactId>jaser-bom</artifactId>
-        <version>0.3.0-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -53,6 +53,18 @@
     <dependency>
       <groupId>io.prometheus</groupId>
       <artifactId>simpleclient_httpserver</artifactId>
+    </dependency>
+
+    <!-- JCABI -->
+    <dependency>
+      <groupId>com.jcabi</groupId>
+      <artifactId>jcabi-aspects</artifactId>
+    </dependency>
+
+    <!-- AspectJ runtime -->
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjrt</artifactId>
     </dependency>
 
     <!-- TEST DEPENDENCIES -->
@@ -90,6 +102,27 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>com.jcabi</groupId>
+        <artifactId>jcabi-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>fr.lehtto.jaser.dns.StartCommand</mainClass>
+              <classpathPrefix>dependency-jars/</classpathPrefix>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

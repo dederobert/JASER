@@ -7,7 +7,7 @@
 
   <groupId>fr.lehtto</groupId>
   <artifactId>jaser-bom</artifactId>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>JASER BOM (Bill Of Material)</name>
@@ -36,6 +36,7 @@
         <artifactId>simpleclient_httpserver</artifactId>
         <version>0.15.0</version>
       </dependency>
+      <!-- LOGGING DEPENDENCIES -->
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-api</artifactId>
@@ -57,8 +58,19 @@
         <artifactId>guava</artifactId>
         <version>31.1-jre</version>
       </dependency>
+      <dependency>
+        <groupId>com.jcabi</groupId>
+        <artifactId>jcabi-aspects</artifactId>
+        <version>0.24.1</version>
+      </dependency>
 
       <!-- RUNTIME DEPENDENCIES -->
+      <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjrt</artifactId>
+        <version>1.6.12</version>
+        <scope>runtime</scope>
+      </dependency>
 
       <!-- TEST DEPENDENCIES -->
       <dependency>

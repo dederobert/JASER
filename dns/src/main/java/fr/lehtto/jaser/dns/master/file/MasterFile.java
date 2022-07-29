@@ -1,12 +1,12 @@
 package fr.lehtto.jaser.dns.master.file;
 
+import fr.lehtto.jaser.dns.entity.DomainName;
 import fr.lehtto.jaser.dns.entity.ResourceRecord;
 import fr.lehtto.jaser.dns.entity.enumration.DnsClass;
-import fr.lehtto.jaser.dns.entity.enumration.Type;
 import fr.lehtto.jaser.dns.entity.parser.InvalidDnsZoneEntryException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.UnmodifiableView;
  */
 public class MasterFile {
 
-  private final List<ResourceRecord> records = new ArrayList<>();
+  private final @NotNull List<Zone> zones = new ArrayList<>();
   private DnsClass dnsClass;
 
   /**
@@ -28,31 +28,20 @@ public class MasterFile {
    * @param resourceRecord the resource record to add
    * @throws InvalidDnsZoneEntryException if the record is invalid
    */
-  public void addRecord(final @NotNull ResourceRecord resourceRecord) throws InvalidDnsZoneEntryException {
+  public void addRecord(final @NotNull ResourceRecord resourceRecord)
+      throws InvalidDnsZoneEntryException {
     // Check if the record is valid.
     if (null == dnsClass) {
       dnsClass = resourceRecord.recordClass();
     } else if (dnsClass != resourceRecord.recordClass()) {
       // The record class is not the same as the master file's class.
-      throw new InvalidDnsZoneEntryException("The record class is not the same as the master file's class.");
+      throw new InvalidDnsZoneEntryException(
+          "The record class is not the same as the master file's class.");
     }
 
-    if (Type.SOA == resourceRecord.type() && isSoaPresent()) {
-      // The SOA record is already present.
-      throw new InvalidDnsZoneEntryException("The SOA record is already present.");
-    }
-
-    records.add(resourceRecord);
-  }
-
-  /**
-   * Checks if SOA record is already present.
-   *
-   * @return true if SOA record is already present, false otherwise
-   */
-  private boolean isSoaPresent() {
-    // Check if the record is valid.
-    return records.stream().map(ResourceRecord::type).anyMatch(Predicate.isEqual(Type.SOA));
+    final String[] labels = resourceRecord.name().labels();
+    final int length = labels.length;
+    insertResourceRecord(resourceRecord, labels, length - 1);
   }
 
   /**
@@ -61,29 +50,22 @@ public class MasterFile {
    * @return the zone's size
    */
   public int size() {
-    return records.size();
+    return zones.stream().mapToInt(Zone::size).sum();
   }
 
   /**
    * Gets the zone's records.
    *
    * @return the zone's records
+   * @deprecated use {@link #zones} instead
    */
   @UnmodifiableView
+  @Deprecated(forRemoval = true)
   public @NotNull List<ResourceRecord> getRecords() {
-    return List.copyOf(records);
-  }
-
-  /**
-   * Sets the zone's records.
-   *
-   * @param resourceRecords the zone's records
-   */
-  public void setResourceRecords(final @Nullable List<ResourceRecord> resourceRecords) {
-    records.clear();
-    if (null != resourceRecords) {
-      records.addAll(resourceRecords);
-    }
+    return zones.stream()
+        .map(Zone::getRecordsFlatList)
+        .flatMap(List::stream)
+        .toList();
   }
 
   /**
@@ -93,5 +75,98 @@ public class MasterFile {
    */
   public DnsClass getDnsClass() {
     return dnsClass;
+  }
+
+  /**
+   * Inserts a resource record in the master file.
+   *
+   * @param resourceRecord the resource record to insert
+   * @param labels         the labels of the resource record
+   * @param labelPosition  the position of the label to insert the resource record in
+   */
+  private void insertResourceRecord(final @NotNull ResourceRecord resourceRecord,
+      final String[] labels,
+      final int labelPosition) {
+    final @NotNull List<Zone> children = this.zones;
+
+    final Zone newZone = insertResourceRecord(children, resourceRecord, labels, labelPosition);
+    if (null != newZone) {
+      this.zones.add(newZone);
+    }
+  }
+
+  /**
+   * Inserts a resource record in the master file.
+   *
+   * @param parent         the parent zone
+   * @param resourceRecord the resource record to insert
+   * @param labels         the labels of the resource record
+   * @param labelPosition  the position of the label to insert the resource record in
+   */
+  private void insertResourceRecord(final @NotNull Zone parent,
+      final @NotNull ResourceRecord resourceRecord,
+      final String[] labels,
+      final int labelPosition) {
+    final @NotNull List<Zone> children = parent.getSubZones();
+    final Zone newZone = insertResourceRecord(children, resourceRecord, labels, labelPosition);
+    if (null != newZone) {
+      final List<Zone> newChildren = new ArrayList<>(children);
+      newChildren.add(newZone);
+      parent.setSubZones(newChildren);
+    }
+  }
+
+
+  /**
+   * Inserts a resource record in the master file.
+   *
+   * @param children       the children zones
+   * @param resourceRecord the resource record to insert
+   * @param labels         the labels of the resource record
+   * @param labelPosition  the position of the label to insert the resource
+   * @return the new zone or null if zone already exists
+   */
+  @Nullable
+  private Zone insertResourceRecord(final @NotNull List<Zone> children,
+      final
+      @NotNull ResourceRecord resourceRecord,
+      final String[] labels,
+      final int labelPosition) {
+    for (final Zone zone : children) {
+      if (labels[labelPosition].equals(zone.getLabel())) {
+        if (0 == labelPosition) {
+          zone.addRecord(resourceRecord);
+          return null;
+        }
+        insertResourceRecord(zone, resourceRecord, labels, labelPosition - 1);
+        return null;
+      }
+    }
+    final Zone newZone = new Zone(labels[labelPosition]);
+    if (0 == labelPosition) {
+      newZone.addRecord(resourceRecord);
+    } else {
+      insertResourceRecord(newZone, resourceRecord, labels, labelPosition - 1);
+    }
+    return newZone;
+  }
+
+
+  /**
+   * Searches for a resource record in the master file.
+   *
+   * @param domainName the domain name to search for
+   * @return the resource record if found
+   */
+  public Optional<Zone> search(final @NotNull DomainName domainName) {
+    final String[] labels = domainName.labels();
+    for (final Zone zone : zones) {
+      final Optional<Zone> optionalZone =
+          zone.search(labels, labels.length - 1);
+      if (optionalZone.isPresent()) {
+        return optionalZone;
+      }
+    }
+    return Optional.empty();
   }
 }

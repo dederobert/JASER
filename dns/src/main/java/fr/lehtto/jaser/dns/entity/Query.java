@@ -2,6 +2,7 @@ package fr.lehtto.jaser.dns.entity;
 
 import static fr.lehtto.jaser.dns.entity.Header.HEADER_SIZE;
 
+import com.jcabi.aspects.Loggable;
 import fr.lehtto.jaser.dns.entity.parser.HeaderParser;
 import fr.lehtto.jaser.dns.entity.parser.QuestionParser;
 import java.util.Arrays;
@@ -28,6 +29,7 @@ public record Query(@NotNull Header header, @NotNull List<Question> questions) {
    * @param length the length of the bytes to read
    * @return the query
    */
+  @Loggable(Loggable.DEBUG)
   public static @NotNull Query read(final byte[] bytes, final int length) {
     LOG.trace("Read {} bytes", length);
 
