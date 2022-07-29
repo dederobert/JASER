@@ -5,7 +5,6 @@ import fr.lehtto.jaser.dns.entity.enumration.Type;
 import fr.lehtto.jaser.dns.entity.parser.InvalidDnsZoneEntryException;
 import fr.lehtto.jaser.dns.entity.rdata.RDataParser;
 import fr.lehtto.jaser.dns.entity.rdata.Rdata;
-import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +12,8 @@ import org.jetbrains.annotations.Nullable;
  * AAA RDATA entity (RFC 1035 section 3.4.1).
  *
  * @author lehtto
- * @version 0.1.0
+ * @since 0.1.0
+ * @version 1.0.0
  */
 public record AaaRdata(@NotNull AddressV6 address) implements Rdata {
 
@@ -22,26 +22,14 @@ public record AaaRdata(@NotNull AddressV6 address) implements Rdata {
     return address.getBytes();
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
   @Override
-  public boolean equals(final Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (null == o || getClass() != o.getClass()) {
-      return false;
-    }
-    final AaaRdata aRdata = (AaaRdata) o;
-    return Objects.equals(address, aRdata.address);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(address);
-  }
-
-  @Override
-  public String toString() {
-    return "A RDATA{"  + address + '}';
+  public int getLength() {
+    return address.getLength();
   }
 
   /**

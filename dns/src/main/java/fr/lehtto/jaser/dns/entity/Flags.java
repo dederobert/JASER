@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * DNS flags.
  *
  * @author Lehtto
+ * @version 1.0.0
  * @since 0.1.0
  */
 @SuppressWarnings({"MagicNumber", "NumericCastThatLosesPrecision"})
@@ -16,6 +17,8 @@ public record Flags(@NotNull QR qr, @NotNull OpCode opcode, boolean aa, boolean 
                     @NotNull RCode rcode) implements Writable {
 
   // region Constants
+  private static final int FLAGS_LENGTH = 2; // 2 bytes
+
   public static final int QR_LENGTH = 1; // 1 bit
   public static final int OPCODE_LENGTH = 4; // 4 bits
   public static final int AA_LENGTH = 1; // 1 bit
@@ -54,6 +57,16 @@ public record Flags(@NotNull QR qr, @NotNull OpCode opcode, boolean aa, boolean 
         (byte) (qr.getValue() << 7 | opcode.getValue() << 3 | (aa ? 0x4 : 0) | (tc ? 0x2 : 0) | (rd ? 0x1 : 0)),
         (byte) ((ra ? 0x80 : 0) | z << 4 | rcode.getValue())
     };
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
+  @Override
+  public int getLength() {
+    return FLAGS_LENGTH;
   }
 
   /**

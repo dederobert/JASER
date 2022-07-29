@@ -13,18 +13,24 @@ import org.jetbrains.annotations.Nullable;
  * CNAME RDATA entity (RFC 1035 Section 3.3.1).
  *
  * @author lehtto
- * @version 0.1.0
+ * @version 1.0.0
+ * @since 0.1.0
  */
 public record CnameRdata(@NotNull DomainName cname) implements Rdata, NamedRData {
 
   @Override
   public byte @NotNull [] getBytes() {
-    return cname.toBytes();
+    return cname.getBytes();
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
   @Override
-  public String toString() {
-    return "CNAME RDATA{" + cname + '}';
+  public int getLength() {
+    return cname.getLength();
   }
 
   @Override

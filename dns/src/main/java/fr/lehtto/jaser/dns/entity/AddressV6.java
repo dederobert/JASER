@@ -10,13 +10,14 @@ import org.jetbrains.annotations.Range;
  * IPV6 address entity.
  *
  * @author lehtto
+ * @version 1.0.0
  * @since 0.1.0
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
 public record AddressV6(short @NotNull[] address) implements Writable {
 
   private static final int HEX_RADIX = 16;
-  private static final int NUMBER_OF_BYTE = 16;
+  private static final int ADDRESS_V6_LENGTH = 16;
 
   /**
    * Creates a new instance of IPV6 address.
@@ -63,7 +64,7 @@ public record AddressV6(short @NotNull[] address) implements Writable {
 
   @Override
   public byte @NotNull[] getBytes() {
-    return ByteBuffer.allocate(NUMBER_OF_BYTE)
+    return ByteBuffer.allocate(getLength())
         .putShort(address[0])
         .putShort(address[1])
         .putShort(address[2])
@@ -73,6 +74,16 @@ public record AddressV6(short @NotNull[] address) implements Writable {
         .putShort(address[6])
         .putShort(address[7])
         .array();
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
+  @Override
+  public int getLength() {
+    return ADDRESS_V6_LENGTH;
   }
 
   @Override

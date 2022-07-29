@@ -8,10 +8,13 @@ import org.jetbrains.annotations.Range;
  * IPV4 address entity.
  *
  * @author lehtto
+ * @version 1.0.0
  * @since 0.1.0
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
 public record AddressV4(byte @NotNull [] address) implements Writable {
+
+  private static final int ADDRESS_V4_LENGTH = 4;
 
   /**
    * Creates a new instance of IPV4 address.
@@ -48,7 +51,17 @@ public record AddressV4(byte @NotNull [] address) implements Writable {
 
   @Override
   public byte @NotNull [] getBytes() {
-    return Arrays.copyOf(address, 4);
+    return Arrays.copyOf(address, getLength());
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
+  @Override
+  public int getLength() {
+    return ADDRESS_V4_LENGTH;
   }
 
   @Override

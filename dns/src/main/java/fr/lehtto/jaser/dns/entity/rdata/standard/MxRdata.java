@@ -15,25 +15,28 @@ import org.jetbrains.annotations.Nullable;
  * MX RDATA entity (RFC 1035, section 3.3.9).
  *
  * @author lehtto
- * @version 0.1.0
+ * @version 1.0.0
+ * @since 0.1.0
  */
 public record MxRdata(short preference, @NotNull DomainName exchange) implements Rdata, NamedRData {
 
   @Override
   public byte @NotNull [] getBytes() {
-    final byte[] exchangeBytes = exchange.toBytes();
+    final byte[] exchangeBytes = exchange.getBytes();
     final ByteBuffer buffer = ByteBuffer.allocate(2 + exchangeBytes.length);
     buffer.putShort(preference);
     buffer.put(exchangeBytes);
     return buffer.array();
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
   @Override
-  public String toString() {
-    return "MX RDATA{" +
-        "preference=" + preference +
-        ", exchange='" + exchange + '\'' +
-        '}';
+  public int getLength() {
+    return 2 + exchange.getLength();
   }
 
   @Override

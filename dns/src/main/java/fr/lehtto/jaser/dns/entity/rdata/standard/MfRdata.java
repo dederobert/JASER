@@ -13,13 +13,24 @@ import org.jetbrains.annotations.Nullable;
  * MF RDATA entity (RFC 1035, section 3.3.5) (Obsolete).
  *
  * @author lehtto
- * @version 0.1.0
+ * @version 1.0.0
+ * @since 0.1.0
  */
 public record MfRdata(@NotNull DomainName madname) implements Rdata, NamedRData {
 
   @Override
   public byte @NotNull [] getBytes() {
-    return madname.toBytes();
+    return madname.getBytes();
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
+  @Override
+  public int getLength() {
+    return madname.getLength();
   }
 
   @Override

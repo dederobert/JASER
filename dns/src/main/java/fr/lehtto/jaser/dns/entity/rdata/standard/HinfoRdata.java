@@ -15,24 +15,27 @@ import org.jetbrains.annotations.Nullable;
  * HINFO RDATA entity (RFC 1035, section 3.3.2).
  *
  * @author lehtto
+ * @version 1.0.0
  * @version 0.1.0
  */
 public record HinfoRdata(@NotNull String hardware, @NotNull String software) implements Rdata {
 
   @Override
   public byte @NotNull [] getBytes() {
-    final ByteBuffer buffer = ByteBuffer.allocate(hardware.length() + software.length());
+    final ByteBuffer buffer = ByteBuffer.allocate(getLength());
     buffer.put(hardware.getBytes(StandardCharsets.UTF_8));
     buffer.put(software.getBytes(StandardCharsets.UTF_8));
     return buffer.array();
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
   @Override
-  public String toString() {
-    return "HINFO RDATA{" +
-        "hardware='" + hardware + '\'' +
-        ", software='" + software + '\'' +
-        '}';
+  public int getLength() {
+    return hardware.length() + software.length();
   }
 
   /**
