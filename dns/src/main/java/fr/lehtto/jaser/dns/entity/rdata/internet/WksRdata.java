@@ -13,7 +13,8 @@ import org.jetbrains.annotations.Nullable;
  * WKS RDATA entity (RFC 1035, section 3.4.2).
  *
  * @author lehtto
- * @version 0.1.0
+ * @version 1.0.0
+ * @since 0.1.0
  */
 public record WksRdata(@NotNull AddressV4 address, byte protocol, byte @NotNull [] bitmap) implements Rdata {
 
@@ -24,6 +25,16 @@ public record WksRdata(@NotNull AddressV4 address, byte protocol, byte @NotNull 
     bytes[4] = protocol;
     System.arraycopy(bitmap, 0, bytes, 5, bitmap.length);
     return bytes;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
+  @Override
+  public int getLength() {
+    return address.getLength() + bitmap.length + 1;
   }
 
   @Override

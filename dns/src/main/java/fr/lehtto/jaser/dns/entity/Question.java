@@ -3,7 +3,6 @@ package fr.lehtto.jaser.dns.entity;
 import fr.lehtto.jaser.dns.entity.enumration.DnsClass;
 import fr.lehtto.jaser.dns.entity.enumration.Type;
 import java.nio.ByteBuffer;
-import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * DNS question.
  *
  * @author Lehtto
+ * @version 1.0.0
  * @since 0.1.0
  */
 public record Question(@NotNull DomainName name, @NotNull Type type,
@@ -21,20 +21,19 @@ public record Question(@NotNull DomainName name, @NotNull Type type,
    *
    * @return the builder
    */
-  public static @NotNull Builder builder() { return new Builder(); }
+  public static @NotNull Builder builder() {
+    return new Builder();
+  }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public byte @NotNull[] getBytes() {
-    final byte[] nameBytes = name.toBytes();
+  public byte @NotNull [] getBytes() {
+    final byte[] nameBytes = name.getBytes();
     final byte[] typeBytes = type.getBytes();
     final byte[] recordClassBytes = recordClass.getBytes();
-    final ByteBuffer byteBuffer =
-        ByteBuffer.allocate(Stream.of(nameBytes, typeBytes, recordClassBytes)
-                                .mapToInt(v -> v.length)
-                                .sum());
+    final ByteBuffer byteBuffer = ByteBuffer.allocate(getLength());
     byteBuffer.put(nameBytes);
     byteBuffer.put(typeBytes);
     byteBuffer.put(recordClassBytes);
@@ -42,11 +41,23 @@ public record Question(@NotNull DomainName name, @NotNull Type type,
   }
 
   /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
+  @Override
+  public int getLength() {
+    return name.getLength() + type.getLength() + recordClass.getLength();
+  }
+
+  /**
    * Builder for the question.
    *
    * @return the builder
    */
-  public @NotNull Builder toBuilder() { return new Builder(this); }
+  public @NotNull Builder toBuilder() {
+    return new Builder(this);
+  }
 
   /**
    * Builder for the question.

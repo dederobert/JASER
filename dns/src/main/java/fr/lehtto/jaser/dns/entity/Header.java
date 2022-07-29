@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
  * DNS header.
  *
  * @author Lehtto
+ * @version 1.0.0
  * @since 0.1.0
  */
 public record Header(short id, @NotNull Flags flags, short qdcount,
@@ -59,6 +60,16 @@ public record Header(short id, @NotNull Flags flags, short qdcount,
     bb.putShort(arcount);
 
     return bytes;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
+  @Override
+  public int getLength() {
+    return HEADER_SIZE;
   }
 
   /**

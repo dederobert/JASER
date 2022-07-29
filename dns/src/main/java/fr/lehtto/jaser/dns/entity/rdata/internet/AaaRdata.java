@@ -13,13 +13,24 @@ import org.jetbrains.annotations.Nullable;
  * AAA RDATA entity (RFC 1035 section 3.4.1).
  *
  * @author lehtto
- * @version 0.1.0
+ * @since 0.1.0
+ * @version 1.0.0
  */
 public record AaaRdata(@NotNull AddressV6 address) implements Rdata {
 
   @Override
   public byte @NotNull [] getBytes() {
     return address.getBytes();
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
+  @Override
+  public int getLength() {
+    return address.getLength();
   }
 
   @Override

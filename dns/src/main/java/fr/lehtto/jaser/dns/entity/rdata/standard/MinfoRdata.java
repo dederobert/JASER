@@ -13,18 +13,29 @@ import org.jetbrains.annotations.Nullable;
  * MINFO RDATA entity (RFC 1035, section 3.3.7) (Experimental).
  *
  * @author lehtto
- * @version 0.1.0
+ * @version 1.0.0
+ * @since 0.1.0
  */
 public record MinfoRdata(@NotNull DomainName rmailbx, @NotNull DomainName emailbx) implements Rdata, MultiNamedRData {
 
   @Override
   public byte @NotNull [] getBytes() {
-    final byte[] rmailbxBytes = rmailbx.toBytes();
-    final byte[] emailbxBytes = emailbx.toBytes();
+    final byte[] rmailbxBytes = rmailbx.getBytes();
+    final byte[] emailbxBytes = emailbx.getBytes();
     final ByteBuffer buffer = ByteBuffer.allocate(rmailbxBytes.length + emailbxBytes.length);
     buffer.put(rmailbxBytes);
     buffer.put(emailbxBytes);
     return buffer.array();
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
+  @Override
+  public int getLength() {
+    return rmailbx.getLength() + emailbx.getLength();
   }
 
   @Override

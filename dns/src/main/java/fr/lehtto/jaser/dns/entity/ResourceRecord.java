@@ -5,30 +5,26 @@ import fr.lehtto.jaser.dns.entity.enumration.Type;
 import fr.lehtto.jaser.dns.entity.rdata.Rdata;
 import java.nio.ByteBuffer;
 import java.util.Objects;
-import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * DNS resource record (RFC 1035 section 4.1.3).
  *
  * @author Lehtto
- * @version 0.2.0
+ * @version 1.0.0
  * @since 0.1.0
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
 public final class ResourceRecord implements Writable {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(ResourceRecord.class);
-
   private static final int TTL_LENGTH = 4;
   private static final int LENGTH_RDATA_LENGTH = 2;
-  private static final short POINTER_MASK = (short)0xc000;
+  private static final int POINTER_LENGTH = 2;
+  private static final short POINTER_MASK = (short) 0xc000;
   private final boolean useCompression;
-  private final Object pointer;
+  private final Writable pointer;
   private final @NotNull DomainName name;
   private final @NotNull Type type;
   private final @NotNull DnsClass recordClass;
@@ -46,10 +42,10 @@ public final class ResourceRecord implements Writable {
    * @param data        the data of the resource record
    */
   public ResourceRecord(final @NotNull DomainName name,
-                        final @NotNull Type type,
-                        final @NotNull DnsClass recordClass,
-                        final @Range(from = 0, to = Integer.MAX_VALUE) int ttl,
-                        final @NotNull Rdata data) {
+      final @NotNull Type type,
+      final @NotNull DnsClass recordClass,
+      final @Range(from = 0, to = Integer.MAX_VALUE) int ttl,
+      final @NotNull Rdata data) {
     this.useCompression = false;
     this.pointer = null;
     this.name = name;
@@ -67,11 +63,12 @@ public final class ResourceRecord implements Writable {
    * @param recordClass the class of the resource record
    * @param ttl         the time to live of the resource record
    * @param data        the data of the resource record
+   * @since 1.0.0
    */
-  public ResourceRecord(final Object pointer, final @NotNull Type type,
-                        final @NotNull DnsClass recordClass,
-                        final @Range(from = 0, to = Integer.MAX_VALUE) int ttl,
-                        final @NotNull Rdata data) {
+  public ResourceRecord(final Writable pointer, final @NotNull Type type,
+      final @NotNull DnsClass recordClass,
+      final @Range(from = 0, to = Integer.MAX_VALUE) int ttl,
+      final @NotNull Rdata data) {
     this.useCompression = true;
     this.pointer = pointer;
     this.name = DomainName.of("");
@@ -86,99 +83,58 @@ public final class ResourceRecord implements Writable {
    *
    * @return the builder
    */
-  public static Builder builder() { return new Builder(); }
+  public static Builder builder() {
+    return new Builder();
+  }
 
   /**
    * Creates a new builder for the resource record.
    *
    * @return the new builder
    */
-  public Builder toBuilder() { return new Builder(this); }
+  public Builder toBuilder() {
+    return new Builder(this);
+  }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public byte @NotNull[] getBytes() {
+  public byte @NotNull [] getBytes() {
 
-    final byte[] nameBytes = name.toBytes();
+    final byte[] nameBytes = name.getBytes();
     final byte[] typeBytes = type.getBytes();
     final byte[] recordClassBytes = recordClass.getBytes();
     final byte[] dataBytes = data.getBytes();
 
-    // Size of the buffer is the sum of the sizes of the fields.
-    final int bufferSize = Stream.of(typeBytes, recordClassBytes, dataBytes)
-                               .mapToInt(v -> v.length)
-                               .sum() +
-                           TTL_LENGTH + LENGTH_RDATA_LENGTH +
-                           (useCompression ? 2 : nameBytes.length);
-
-    final ByteBuffer byteBuffer = ByteBuffer.allocate(bufferSize);
+    final ByteBuffer byteBuffer = ByteBuffer.allocate(getLength());
     if (useCompression) {
       if (-1 == pointerShort) {
         throw new IllegalStateException(
             "The pointer has not been resolved yet.");
       }
-      byteBuffer.putShort((short)(pointerShort | POINTER_MASK));
+      byteBuffer.putShort((short) (pointerShort | POINTER_MASK));
     } else {
       byteBuffer.put(nameBytes);
     }
     byteBuffer.put(typeBytes);
     byteBuffer.put(recordClassBytes);
     byteBuffer.putInt(ttl);
-    byteBuffer.putShort((short)dataBytes.length);
+    byteBuffer.putShort((short) dataBytes.length);
     byteBuffer.put(dataBytes);
 
     return byteBuffer.array();
   }
 
   /**
-   * Resolves the pointer.
+   * {@inheritDoc}
    *
-   * @param response the response on which the pointer is resolved
-   * @since 0.2.0
+   * @since 1.0.0
    */
-  @SuppressWarnings("ObjectEquality")
-  void resolvePointer(final Response response) {
-    if (!useCompression) {
-      return;
-    }
-
-    short offset = Header.HEADER_SIZE;
-    for (final Question question : response.questions()) {
-      if (pointer == question) {
-        pointerShort = offset;
-        return;
-      }
-      offset += question.getBytes().length;
-    }
-
-    for (final ResourceRecord resourceRecord : response.answerRecords()) {
-      if (pointer == resourceRecord) {
-        pointerShort = offset;
-        return;
-      }
-      offset += resourceRecord.getBytes().length;
-    }
-
-    for (final ResourceRecord resourceRecord : response.authorityRecords()) {
-      if (pointer == resourceRecord) {
-        pointerShort = offset;
-        return;
-      }
-      offset += resourceRecord.getBytes().length;
-    }
-
-    for (final ResourceRecord resourceRecord : response.additionalRecords()) {
-      if (pointer == resourceRecord) {
-        pointerShort = offset;
-        return;
-      }
-      offset += resourceRecord.getBytes().length;
-    }
-
-    LOG.error("Could not resolve pointer {}", pointer);
-    throw new IllegalStateException("Could not resolve pointer");
+  @Override
+  public int getLength() {
+    return type.getLength() + recordClass.getLength() + TTL_LENGTH + LENGTH_RDATA_LENGTH +
+        (useCompression ? POINTER_LENGTH : name.getLength()) + data.getLength();
   }
 
   /**
@@ -186,35 +142,76 @@ public final class ResourceRecord implements Writable {
    *
    * @return the name of the resource record
    */
-  public @NotNull DomainName name() { return name; }
+  public @NotNull DomainName name() {
+    return name;
+  }
 
   /**
    * Gets the type of the resource record.
    *
    * @return the type of the resource record
    */
-  public @NotNull Type type() { return type; }
+  public @NotNull Type type() {
+    return type;
+  }
 
   /**
    * Gets the class of the resource record.
    *
    * @return the class of the resource record
    */
-  public @NotNull DnsClass recordClass() { return recordClass; }
+  public @NotNull DnsClass recordClass() {
+    return recordClass;
+  }
 
   /**
    * Gets the time to live of the resource record.
    *
    * @return the time to live of the resource record
    */
-  public @Range(from = 0, to = Integer.MAX_VALUE) int ttl() { return ttl; }
+  public @Range(from = 0, to = Integer.MAX_VALUE) int ttl() {
+    return ttl;
+  }
 
   /**
    * Gets the data of the resource record.
    *
    * @return the data of the resource record
    */
-  public @NotNull Rdata data() { return data; }
+  public @NotNull Rdata data() {
+    return data;
+  }
+
+  /**
+   * Whether the resource record is compressed.
+   *
+   * @return true if the resource record is compressed, false otherwise
+   * @since 1.0.0
+   */
+  public boolean useCompression() {
+    return useCompression;
+  }
+
+  /**
+   * Gets the pointer to the name (if useCompression is true).
+   *
+   * @return the pointer to the name (if useCompression is true)
+   * @since 1.0.0
+   */
+  @Nullable("if useCompression is false")
+  public Writable pointer() {
+    return pointer;
+  }
+
+  /**
+   * Sets the pointer value.
+   *
+   * @param pointer pointer value
+   * @since 1.0.0
+   */
+  public void pointerShort(final int pointer) {
+    this.pointerShort = (short) pointer;
+  }
 
   @Override
   public boolean equals(final Object obj) {
@@ -224,7 +221,7 @@ public final class ResourceRecord implements Writable {
     if (null == obj || obj.getClass() != this.getClass()) {
       return false;
     }
-    final var that = (ResourceRecord)obj;
+    final var that = (ResourceRecord) obj;
     return this.useCompression == that.useCompression &&
         Objects.equals(this.pointer, that.pointer) &&
         Objects.equals(this.name, that.name) && this.type == that.type &&
@@ -234,8 +231,7 @@ public final class ResourceRecord implements Writable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(useCompression, pointer, name, type, recordClass, ttl,
-                        data);
+    return Objects.hash(useCompression, pointer, name, type, recordClass, ttl, data);
   }
 
   @Override
@@ -257,7 +253,7 @@ public final class ResourceRecord implements Writable {
   public static class Builder {
 
     private boolean useCompression;
-    private Object pointer;
+    private Writable pointer;
     private DomainName name;
     private Type type;
     private DnsClass recordClass;
@@ -303,8 +299,9 @@ public final class ResourceRecord implements Writable {
      *
      * @param pointer the pointer to the name of the resource record.
      * @return the builder
+     * @since 1.0.0
      */
-    public Builder pointer(final Object pointer) {
+    public Builder pointer(final Writable pointer) {
       this.useCompression = true;
       this.pointer = pointer;
       return this;

@@ -13,13 +13,24 @@ import org.jetbrains.annotations.Nullable;
  * MG RDATA entity (RFC 1035, section 3.3.6) (Experimental).
  *
  * @author lehtto
- * @version 0.1.0
+ * @version 1.0.0
+ * @since 0.1.0
  */
 public record MgRdata(@NotNull DomainName mgmName) implements Rdata, NamedRData {
 
   @Override
   public byte @NotNull [] getBytes() {
-    return mgmName.toBytes();
+    return mgmName.getBytes();
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
+  @Override
+  public int getLength() {
+    return mgmName.getLength();
   }
 
   @Override

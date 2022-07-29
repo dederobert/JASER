@@ -7,16 +7,16 @@ import java.util.StringJoiner;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A domain name is a sequence of labels, each label is a sequence of
- * characters.
+ * A domain name is a sequence of labels, each label is a sequence of characters.
  *
  * @author lehtto
  * @since 0.2.0
+ * @version 1.0.0
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
-public final class DomainName {
+public final class DomainName implements Writable {
 
-  private final String @NotNull[] labels;
+  private final String @NotNull [] labels;
   private final @NotNull String value;
 
   /**
@@ -25,8 +25,8 @@ public final class DomainName {
    * @param labels the domain name labels
    * @param value  the domain name value
    */
-  private DomainName(final String @NotNull[] labels,
-                     @NotNull final String value) {
+  private DomainName(final String @NotNull [] labels,
+      @NotNull final String value) {
     this.labels = labels;
     this.value = value;
   }
@@ -47,7 +47,7 @@ public final class DomainName {
    * @param labels the labels
    * @return the domain name
    */
-  public static DomainName of(final String @NotNull[] labels) {
+  public static DomainName of(final String @NotNull [] labels) {
     final StringJoiner joiner = new StringJoiner(".");
     for (final String label : labels) {
       joiner.add(label);
@@ -60,14 +60,26 @@ public final class DomainName {
    *
    * @return the domain name as a byte array.
    */
-  public byte @NotNull[] toBytes() {
-    final ByteBuffer byteBuffer = ByteBuffer.allocate(value.length() + 2);
+  @Override
+  public byte @NotNull [] getBytes() {
+    final ByteBuffer byteBuffer = ByteBuffer.allocate(getLength());
     for (final String label : labels) {
-      byteBuffer.put((byte)label.length());
+      byteBuffer.put((byte) label.length());
       byteBuffer.put(label.getBytes(StandardCharsets.UTF_8));
     }
-    byteBuffer.put((byte)0);
+    byteBuffer.put((byte) 0);
     return byteBuffer.array();
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
+  @Override
+  public int getLength() {
+    final Integer totalLabelLength = Arrays.stream(labels).map(String::length).reduce(0, Integer::sum);
+    return totalLabelLength + labels.length + 1;
   }
 
   /**
@@ -75,14 +87,18 @@ public final class DomainName {
    *
    * @return the domain name as a string.
    */
-  public String value() { return value; }
+  public String value() {
+    return value;
+  }
 
   /**
    * Gets the domain name as an array of labels.
    *
    * @return the domain name as an array of labels.
    */
-  public String @NotNull[] labels() { return labels; }
+  public String @NotNull [] labels() {
+    return labels;
+  }
 
   @Override
   public boolean equals(final Object o) {
@@ -92,7 +108,7 @@ public final class DomainName {
     if (null == o || getClass() != o.getClass()) {
       return false;
     }
-    final DomainName that = (DomainName)o;
+    final DomainName that = (DomainName) o;
     return Arrays.equals(labels, that.labels);
   }
 

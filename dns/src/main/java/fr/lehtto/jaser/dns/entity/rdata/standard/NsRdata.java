@@ -13,13 +13,24 @@ import org.jetbrains.annotations.Nullable;
  * NS RDATA entity (RFC 1035 Section 3.3.11).
  *
  * @author lehtto
- * @version 0.1.0
+ * @version 1.0.0
+ * @since 0.1.0
  */
 public record NsRdata(@NotNull DomainName nsdName) implements Rdata, NamedRData {
 
   @Override
   public byte @NotNull [] getBytes() {
-    return nsdName.toBytes();
+    return nsdName.getBytes();
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
+  @Override
+  public int getLength() {
+    return nsdName.getLength();
   }
 
   @Override

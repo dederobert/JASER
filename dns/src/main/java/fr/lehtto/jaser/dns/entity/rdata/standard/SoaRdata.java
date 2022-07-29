@@ -14,15 +14,22 @@ import org.jetbrains.annotations.Nullable;
  * SOA RDATA entity (RFC 1035 section 3.3.13).
  *
  * @author lehtto
- * @version 0.1.0
+ * @version 1.0.0
+ * @since 0.1.0
  */
 public record SoaRdata(@NotNull DomainName origin, @NotNull DomainName contact, int serial, int refresh, int retry,
                        int expire, int minimum) implements Rdata, MultiNamedRData {
 
+  private static final int SERIAL_LENGTH = 4;
+  private static final int REFRESH_LENGTH = 4;
+  private static final int RETRY_LENGTH = 4;
+  private static final int EXPIRE_LENGTH = 4;
+  private static final int MINIMUM_LENGTH = 4;
+
   @Override
   public byte @NotNull [] getBytes() {
-    final byte[] originBytes = origin.toBytes();
-    final byte[] contactBytes = contact.toBytes();
+    final byte[] originBytes = origin.getBytes();
+    final byte[] contactBytes = contact.getBytes();
     final ByteBuffer buffer = ByteBuffer.allocate(originBytes.length + contactBytes.length + 20);
     buffer.put(originBytes);
     buffer.put(contactBytes);
@@ -32,6 +39,18 @@ public record SoaRdata(@NotNull DomainName origin, @NotNull DomainName contact, 
     buffer.putInt(expire);
     buffer.putInt(minimum);
     return buffer.array();
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
+  @Override
+  public int getLength() {
+    //noinspection OverlyComplexArithmeticExpression
+    return origin.getLength() + contact.getLength() + SERIAL_LENGTH + REFRESH_LENGTH + RETRY_LENGTH + EXPIRE_LENGTH
+        + MINIMUM_LENGTH;
   }
 
   @Override

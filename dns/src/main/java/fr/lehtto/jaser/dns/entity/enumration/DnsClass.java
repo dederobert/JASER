@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
  * DNS resource record class.
  *
  * @author Lehtto
+ * @version 1.0.0
  * @since 0.1.0
  */
 @SuppressWarnings({"MagicNumber", "NumericCastThatLosesPrecision"})
@@ -28,6 +29,7 @@ public enum DnsClass {
    */
   HS(4);
 
+  private static final int CLASS_LENGTH = 2;
   private final short value;
 
   /**
@@ -70,5 +72,15 @@ public enum DnsClass {
    */
   public byte @NotNull [] getBytes() {
     return new byte[]{(byte) (value >> 8), (byte) (value & 0x00FF)};
+  }
+
+  /**
+   * Gets the class size in bytes.
+   *
+   * @return the class size in bytes
+   * @since 1.0.0
+   */
+  public int getLength() {
+    return CLASS_LENGTH;
   }
 }

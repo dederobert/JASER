@@ -7,6 +7,7 @@ import fr.lehtto.jaser.dns.entity.Question;
 import fr.lehtto.jaser.dns.entity.ResourceRecord;
 import fr.lehtto.jaser.dns.entity.ResourceRecord.Builder;
 import fr.lehtto.jaser.dns.entity.Response;
+import fr.lehtto.jaser.dns.entity.Writable;
 import fr.lehtto.jaser.dns.entity.enumration.QR;
 import fr.lehtto.jaser.dns.entity.enumration.RCode;
 import fr.lehtto.jaser.dns.entity.rdata.MultiNamedRData;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.Unmodifiable;
  * Helper class for {@link QueryHandler}.
  *
  * @author lehtto
- * @version 1.0.0
+ * @since 1.0.0
  */
 final class QueryHandlerHelper {
 
@@ -68,10 +69,10 @@ final class QueryHandlerHelper {
     final ArrayList<ResourceRecord> result = new ArrayList<>();
     for (final ResourceRecord answer : answers) {
       if (answer.data() instanceof NamedRData namedRData) {
-        search(namedRData.getName(), answer).forEach(result::add);
+        search(namedRData.getName(), namedRData.getName()).forEach(result::add);
       } else if (answer.data() instanceof MultiNamedRData namedRData) {
         for (final DomainName name : namedRData.getNames()) {
-          search(name, answer).forEach(result::add);
+          search(name, name).forEach(result::add);
         }
       }
     }
@@ -109,7 +110,7 @@ final class QueryHandlerHelper {
    * @param pointer the pointer to use for the resource records
    * @return the list of resource records found
    */
-  private Stream<ResourceRecord> search(final @NotNull DomainName name, final @NotNull Object pointer) {
+  private Stream<ResourceRecord> search(final @NotNull DomainName name, final @NotNull Writable pointer) {
     return Dns.INSTANCE.getMasterFile()
         .search(name)
         .stream()

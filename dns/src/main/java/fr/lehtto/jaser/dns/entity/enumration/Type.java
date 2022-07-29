@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
  * DNS resource record type enumeration.
  *
  * @author Lehtto
+ * @version 1.0.0
  * @since 0.1.0
  */
 @SuppressWarnings({"MagicNumber", "NumericCastThatLosesPrecision"})
@@ -110,6 +111,7 @@ public enum Type {
    */
   ANY(255);
 
+  private static final int TYPE_LENGTH = 2;
   /**
    * The type value.
    */
@@ -155,5 +157,15 @@ public enum Type {
    */
   public byte[] getBytes() {
     return new byte[]{(byte) (typeValue >> 8), (byte) (typeValue & 0x00FF)};
+  }
+
+  /**
+   * Gets the size of the type in bytes.
+   *
+   * @return the size of the type in bytes
+   * @since 1.0.0
+   */
+  public int getLength() {
+    return TYPE_LENGTH;
   }
 }
