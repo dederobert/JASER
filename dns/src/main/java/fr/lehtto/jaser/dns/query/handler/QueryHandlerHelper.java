@@ -2,9 +2,13 @@ package fr.lehtto.jaser.dns.query.handler;
 
 import fr.lehtto.jaser.dns.Dns;
 import fr.lehtto.jaser.dns.entity.DomainName;
+import fr.lehtto.jaser.dns.entity.Query;
 import fr.lehtto.jaser.dns.entity.Question;
 import fr.lehtto.jaser.dns.entity.ResourceRecord;
 import fr.lehtto.jaser.dns.entity.ResourceRecord.Builder;
+import fr.lehtto.jaser.dns.entity.Response;
+import fr.lehtto.jaser.dns.entity.enumration.QR;
+import fr.lehtto.jaser.dns.entity.enumration.RCode;
 import fr.lehtto.jaser.dns.entity.rdata.MultiNamedRData;
 import fr.lehtto.jaser.dns.entity.rdata.NamedRData;
 import fr.lehtto.jaser.dns.master.file.Zone;
@@ -72,6 +76,30 @@ final class QueryHandlerHelper {
       }
     }
     return List.copyOf(result);
+  }
+
+  /**
+   * Creates a response with not implemented error.
+   *
+   * @param query the query to answer
+   * @return the response
+   */
+  Response newNotImplementedResponse(final @NotNull Query query) {
+    return Response.builder()
+        .header(query.header()
+            .toBuilder()
+            .flags(query.header()
+                .flags()
+                .toBuilder()
+                .qr(QR.RESPONSE)
+                .rcode(RCode.NOT_IMPLEMENTED)
+                .build())
+            .build())
+        .questions(query.questions())
+        .noAnswer()
+        .noAuthorityRecords()
+        .noAdditionalRecords()
+        .build();
   }
 
   /**

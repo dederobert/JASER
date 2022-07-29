@@ -30,7 +30,7 @@ public final class QueryHandlerFactory {
       case A -> AQueryHandler.INSTANCE;
       case NS -> NSQueryHandler.INSTANCE;
       case CNAME -> CnameQueryHandler.INSTANCE;
-      default -> throw new IllegalArgumentException("Unsupported query type");
+      default -> DefaultQueryHandler.INSTANCE;
     };
   }
 }
